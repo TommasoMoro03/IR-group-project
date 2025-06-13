@@ -1,12 +1,22 @@
 [
   {
-    "id": "doc1",
-    "text": "Questo è il testo pulito della prima pagina web. Contiene informazioni rilevanti.",
-    "metadata": {"url": "http://example.com/page1", "title": "Pagina 1"}
+    "id": "doc_ir_basics",
+    "text": "Information Retrieval (IR) is the science of searching for information within large collections of documents. Key components include web crawling, efficient indexing, and various retrieval models. Building an inverted index is crucial for fast keyword-based searches and ranking.",
+    "metadata": {"source": "IR Course Notes", "topic": "Information Retrieval"}
   },
   {
-    "id": "doc2",
-    "text": "La seconda pagina parla di Information Retrieval e modelli ibridi per la ricerca.",
-    "metadata": {"url": "http://example.com/page2", "title": "Pagina 2"}
+    "id": "doc_space_telescope",
+    "text": "The James Webb Space Telescope continues to deliver breathtaking images of distant galaxies, offering unprecedented insights into the early universe. Its infrared capabilities allow astronomers to peer through cosmic dust, revealing star formation regions and exoplanet atmospheres, vastly expanding our knowledge.",
+    "metadata": {"source": "NASA Article", "topic": "Astronomy"}
+  },
+  {
+    "id": "doc_homemade_pasta",
+    "text": "For a perfect homemade pasta, combine durum wheat semolina with eggs and a pinch of salt. Knead the dough until smooth and elastic, then let it rest before rolling it thin and cutting it into desired shapes like tagliatelle or ravioli. Serve with a rich tomato sauce for an authentic Italian dish.",
+    "metadata": {"source": "Cooking Blog", "topic": "Cuisine"}
+  },
+  {
+    "id": "doc_ml_bioinformatics",
+    "text": "Machine learning algorithms are increasingly applied in bioinformatics for tasks such as protein folding prediction, gene sequencing analysis, and drug discovery. Deep learning models, in particular, show promise in identifying complex patterns in biological data, accelerating research.",
+    "metadata": {"source": "Science Journal", "topic": "Bioinformatics"}
   }
 ]
