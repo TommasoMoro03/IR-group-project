@@ -1,8 +1,8 @@
-import requests
-from bs4 import BeautifulSoup
 import sys
 import json
 import os
+import requests
+from bs4 import BeautifulSoup
 
 def extract_main_text(html):
     page = BeautifulSoup(html, 'html.parser')
