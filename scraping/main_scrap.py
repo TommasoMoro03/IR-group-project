@@ -49,7 +49,7 @@ def extract_main_text(html):
 def download_html(url):
     """ Funzione per caricare HTML da un URL. """
     try:
-        # Usa la libreria 'request' per scaricare il contenuto della pagina. Aspetta massimo 10 secondo per ricevere risposta.
+        # Usa la libreria 'request' per scaricare il contenuto della pagina. Aspetta massimo 10 secondi per ricevere risposta.
         response = requests.get(url, timeout=10)
         # Controlla se la richiesta è andata a buon fine
         response.raise_for_status()
