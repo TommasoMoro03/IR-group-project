@@ -5,6 +5,9 @@ import requests
 from bs4 import BeautifulSoup
 
 def extract_main_text(html):
+    """
+    Funzione per estrarre e pulire il testo principale e il titolo da una pagina HTML.
+    """
     page = BeautifulSoup(html, 'html.parser')
 
     # Se presente, estrae il titolo della pagina. Altrimenti "No Title"
@@ -16,7 +19,7 @@ def extract_main_text(html):
     for tag in page(['script', 'style', 'nav', 'footer', 'header', 'aside']):
         tag.decompose()
 
-    # Cerchiamo il <main>
+    # Cerca il <main>
     possible_main = page.find('main')
     
     if possible_main:
@@ -52,6 +55,10 @@ def download_html(url):
     
 
 def main():
+    """
+    Funzione principale che gestisce il flusso del programma:
+    gestisce input URL/file, estrae testo e titolo, salva file e aggiorna indice JSON.
+    """
     # Controlla che l'utente abbia passato esattamente un argomento (URL o file)
     if len(sys.argv) != 2:
         print("Uso: python main.py <URL o file>")
@@ -63,13 +70,13 @@ def main():
     if arg.startswith("http://") or arg.startswith("https://"):
         html = download_html(arg)
 
-    # Altrimenti, se è un file esistente, lo legge
+    # Se invece è un file esistente, lo legge
     elif os.path.isfile(arg):
         with open(arg, "r", encoding="utf-8") as f:
             html = f.read()
 
+    # Altrimenti se non è URL né file, esce con errore
     else:
-        # Se non è URL né file, esce con errore
         print("Errore: l'argomento non è un URL valido né un file esistente.")
         sys.exit(1)
 
@@ -97,6 +104,7 @@ def main():
 
     # File dove vengono salvati tutti i record, cioè l’indice degli articoli
     index_file = "index.json"
+
     # Se esiste già un file index.json, lo apre e carica i dati già salvati in una lista Python
     if os.path.exists(index_file):
         with open(index_file, "r", encoding="utf-8") as f:
