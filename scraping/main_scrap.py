@@ -89,27 +89,34 @@ def main():
 
     # Costruisce il record da inserire nell'indice JSON
     record = {
-        "filename": filename,
-        "title": title,
-        "url": arg,
-        "metadata": {}
+        "filename": filename, # nome .txt con cui è salvato nella cartella
+        "title": title, # preso dal tag <title> html
+        "url": arg, # l'url dell'articolo a cui si riferisce
+        "metadata": {} # eventuali altri attributi utili, es. categoria
     }
 
+    # File dove vengono salvati tutti i record, cioè l’indice degli articoli
     index_file = "index.json"
-    # Se esiste già un file index.json, lo carica, altrimenti crea una lista vuota
+    # Se esiste già un file index.json, lo apre e carica i dati già salvati in una lista Python
     if os.path.exists(index_file):
         with open(index_file, "r", encoding="utf-8") as f:
             index_data = json.load(f)
     else:
+        # Se non esiste, crea una lista vuota
         index_data = []
 
-    # Aggiungi il nuovo record all'indice
+    # Aggiunge il nuovo record alla lista
     index_data.append(record)
 
-    # Riscrivi index.json con il record aggiornato
+    # Riscrive index.json con il record aggiornato
     with open(index_file, "w", encoding="utf-8") as f:
         json.dump(index_data, f, ensure_ascii=False, indent=2)
-
+        # dove:
+        # json.dump converte la lista Python in formato JSON e la salva nel file
+        # ensure_ascii=False serve per salvare correttamente i caratteri speciali (accenti)
+        # indent=2 serve per formattare il file in modo tale che sia leggibile
+        
+    # Stampa della conferma che il file è stato salvato
     print(f"Salvato {filename} e aggiornato index.json")
 
 
