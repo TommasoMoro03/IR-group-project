@@ -3,7 +3,10 @@
 # Usa la libreria python BeautifulSoup per rimuovere elementi non utili come menu, pubblicità, script, ecc.
 # Viene usato insieme a un crawler su HTML già scaricati (funziona meglio con pagine statiche).
 
+import requests
 from bs4 import BeautifulSoup
+import sys
+import os
 
 def extract_main_text(html):
     """
@@ -43,18 +46,36 @@ def extract_main_text(html):
     return text # Restituzione del testo pulito
 
 
+def download_html(url):
+    """ Funzione per caricare HTML da un URL. """
+    try:
+        # Usa la libreria 'request' per scaricare il contenuto della pagina. Aspetta massimo 10 secondo per ricevere risposta.
+        response = requests.get(url, timeout=10)
+        # Controlla se la richiesta è andata a buon fine
+        response.raise_for_status()
+        return response.text
+    
+    except Exception as e:
+        print(f"Errore durante il download: {e}")
+        return ""
+
 # Esempio per testare il file
 # python main.py pagina.html
 if __name__ == "__main__":
-    import sys
+    if len(sys.argv) != 2:
+        print("Uso: python scraping/main_scrap.py <URL o percorso file>")
+        sys.exit(1)
 
-    file_name = sys.argv[1]
+    arg = sys.argv[1]
 
-    with open(file_name, "r", encoding="utf-8") as f:
-        html = f.read()
+    if arg.startswith("http://") or arg.startswith("https://"):
+        html = download_html(arg)
+    elif os.path.isfile(arg):
+        with open(arg, "r", encoding="utf-8") as f:
+            html = f.read()
+    else:
+        print("Errore: l'argomento non è un URL valido né un file esistente.")
+        sys.exit(1)
 
-    # Usa la funzione per estrarre il testo pulito dall'HTML
     clean_text = extract_main_text(html)
-
-    # Stampa il testo estratto
     print(clean_text)
