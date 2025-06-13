@@ -21,7 +21,7 @@ class VectorIndex:
         if self.embeddings:
             self.embeddings_matrix = np.vstack(self.embeddings)
             norms = np.linalg.norm(self.embeddings_matrix, axis=1, keepdims=True)
-            norms[norms == 0] = 1e-9  # Avoid division by zero
+            norms[norms == 0] = 1e-9  # avoid division by zero
             self.normalized_embeddings_matrix = self.embeddings_matrix / norms
         else:
             self.embeddings_matrix = np.empty((0, 0))
