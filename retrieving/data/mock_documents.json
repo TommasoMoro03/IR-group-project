@@ -1,0 +1,12 @@
+[
+  {
+    "id": "doc1",
+    "text": "Questo è il testo pulito della prima pagina web. Contiene informazioni rilevanti.",
+    "metadata": {"url": "http://example.com/page1", "title": "Pagina 1"}
+  },
+  {
+    "id": "doc2",
+    "text": "La seconda pagina parla di Information Retrieval e modelli ibridi per la ricerca.",
+    "metadata": {"url": "http://example.com/page2", "title": "Pagina 2"}
+  }
+]
