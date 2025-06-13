@@ -1,69 +1,39 @@
-# main.py
-# Estrazione del contenuto principale (testo) da pagine HTML.
-# Usa la libreria python BeautifulSoup per rimuovere elementi non utili come menu, pubblicità, script, ecc.
-# Viene usato insieme a un crawler su HTML già scaricati (funziona meglio con pagine statiche).
-
 import requests
 from bs4 import BeautifulSoup
 import sys
+import json
 import os
 
 def extract_main_text(html):
-    """
-    Funzione per estrarre il testo principale da una pagina HTML, rimuovendo elementi non informativi.
-
-    Parametri:
-    - html (str): contenuto HTML della pagina.
-
-    Ritorna:
-    - str: testo pulito.
-    """
-    if not html:
-        return "" # Restituisce una stringa vuota
-    
     page = BeautifulSoup(html, 'html.parser')
 
-    # Con 'decompose', rimuove:
-    # script, style: codice invisibile
-    # nav, footer, header, aside: menù, intestazione, pubblicità, ecc.
+    title = page.title.string if page.title else "No Title"
+
     for tag in page(['script', 'style', 'nav', 'footer', 'header', 'aside']):
         tag.decompose()
 
-
-    # Cerca il contenuto principale, <main>
     possible_main = page.find('main')
     
     if possible_main:
         text = possible_main.get_text()
-        # Se trova <main>, prende solo quel testo.
     else:
         text = page.get_text()
-        # Se non lo trova, prende tutto il testo della pagina.
 
-
-    # Pulisce gli spazi in più
     text = ' '.join(text.split())
-    return text # Restituzione del testo pulito
-
+    return text, title
 
 def download_html(url):
-    """ Funzione per caricare HTML da un URL. """
     try:
-        # Usa la libreria 'request' per scaricare il contenuto della pagina. Aspetta massimo 10 secondi per ricevere risposta.
         response = requests.get(url, timeout=10)
-        # Controlla se la richiesta è andata a buon fine
         response.raise_for_status()
         return response.text
-    
     except Exception as e:
         print(f"Errore durante il download: {e}")
         return ""
 
-# Esempio per testare il file
-# python main.py pagina.html
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Uso: python scraping/main_scrap.py <URL o percorso file>")
+        print("Uso: python main.py <URL o file>")
         sys.exit(1)
 
     arg = sys.argv[1]
@@ -77,5 +47,34 @@ if __name__ == "__main__":
         print("Errore: l'argomento non è un URL valido né un file esistente.")
         sys.exit(1)
 
-    clean_text = extract_main_text(html)
-    print(clean_text)
+    clean_text, title = extract_main_text(html)
+
+    # Dai un nome univoco al file (es. basato su numero o timestamp)
+    os.makedirs("documents", exist_ok=True)
+    filename = f"articolo_{len(os.listdir('documents')) + 1}.txt"
+    filepath = os.path.join("documents", filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(clean_text)
+
+    # Costruisci l’entry per Tommy
+    record = {
+        "filename": filename,
+        "title": title,
+        "url": arg,
+        "metadata": {}
+    }
+
+    index_file = "index.json"
+    if os.path.exists(index_file):
+        with open(index_file, "r", encoding="utf-8") as f:
+            index_data = json.load(f)
+    else:
+        index_data = []
+
+    index_data.append(record)
+
+    with open(index_file, "w", encoding="utf-8") as f:
+        json.dump(index_data, f, ensure_ascii=False, indent=2)
+
+    print(f"Salvato {filename} e aggiornato index.json")
