@@ -1,17 +1,19 @@
-import torch
+import numpy as np
 from typing import List, Tuple
-from retrieving.models.embedding_models import EmbeddingModel
 from retrieving.indexing.vector_index import VectorIndex
-from ..utils.document_parser import Document
+from retrieving.embedding.embedding_models import EmbeddingModel
+
 
 class VectorialScorer:
-    def __init__(self, embedding_model: EmbeddingModel, vector_index: VectorIndex, documents: List[Document]):
+    def __init__(self, index: VectorIndex, embedding_model: EmbeddingModel):
+        self.index = index
         self.embedding_model = embedding_model
-        self.vector_index = vector_index
-        self.documents_map = {doc.id: doc for doc in documents}
 
-    def score(self, query: str, k: int = 5) -> List[Tuple[Document, float]]:
-        query_embedding = self.embedding_model.encode([query]).squeeze(0)
-        results = self.vector_index.search(query_embedding, k=k)
-        # maps the doc_ids to the document objects
-        return [(self.documents_map[doc_id], score) for doc_id, score in results]
+    def score(self, query: str, k: int = 5) -> List[Tuple[str, float]]:
+        """
+        Compute similarity scores between the query and indexed chunks.
+        Returns top-k results as list of (chunk_id, score).
+        """
+        query_embedding = self.embedding_model.encode([query])[0]  # shape (dim,)
+        results = self.index.search(query_embedding, k=k)
+        return results
