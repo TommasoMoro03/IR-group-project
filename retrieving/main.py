@@ -1,4 +1,5 @@
 from retrieving.embedding.embedding_models import EmbeddingModel
+from retrieving.hybrid_retriever.hybrid_retriever import HybridRetriever
 from retrieving.indexing.inverted_index import InvertedIndex
 from retrieving.indexing.vector_index import VectorIndex
 from retrieving.scoring.keyword_scorer import KeywordScorer
@@ -24,11 +25,11 @@ chunk_texts = [chunk.text for chunk in chunks]
 embeddings = model.encode(chunk_texts)
 print(f"Computed {len(embeddings)} embeddings of dimension {embeddings.shape[1]}")
 
-"""
 # VECTORIAL INDEXING
 vector_index = VectorIndex()
 vector_index.build_index(chunks, model)
 
+"""
 # RETRIEVING
 vector_scorer = VectorialScorer(vector_index, model)
 query = "Doping during the Cold War"
@@ -38,16 +39,21 @@ for chunk_id, score in results:
     print(f"{chunk_id} - score: {score:.4f}")
 """
 
-# --- build inverted index ---
-inverted_index = InvertedIndex()
-inverted_index.build_index(chunks)
+# (1) vector scorer
+vector_scorer = VectorialScorer(vector_index, model)
 
-# --- keyword BM25 scorer that uses the inverted index ---
-kw_scorer = KeywordScorer(inverted_index)
-query = "Agriculture"
+# (2) inverted index + keyword scorer
+inv = InvertedIndex()
+inv.build_index(chunks)
+keyword_scorer = KeywordScorer(inv)
 
-kw_top = kw_scorer.score(query, top_k=5)
+# (3) hybrid retriever (es: alpha = 0.6 → more importance on vector)
+hybrid = HybridRetriever(vector_scorer, keyword_scorer, alpha=0.9)
 
-print(f"\nBM25 – Top chunks for query: '{query}'")
-for cid, score in kw_top:
-    print(f"{cid}: {score:.4f}")
+# ----------------- TEST -----------------
+query = "Agricultural policy in Brazil"
+results = hybrid.search(query, top_k=5)
+
+print(f"\nHybrid results for query: '{query}' (α=0.6)")
+for cid, h, v, k in results:
+    print(f"{cid} | hybrid={h:.3f} | vec={v:.3f} | key={k:.3f}")

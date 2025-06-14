@@ -1,7 +1,10 @@
 import re
 from collections import defaultdict, Counter
 from typing import Dict, List, Tuple
+
+from retrieving.stemming.custom_stemmer import CustomStemmer
 from retrieving.utils.models import Chunk
+from retrieving.stemming.simple_stemmer import SimpleStemmer
 
 
 class InvertedIndex:
@@ -16,10 +19,12 @@ class InvertedIndex:
         self.chunk_lengths: Dict[str, int] = {}
         self.N: int = 0
         self.avg_dl: float = 0.0
+        self.stemmer = CustomStemmer()
 
     # ---------- helpers ---------- #
     def _tokenize(self, text: str) -> List[str]:
-        return re.findall(r"\b\w+\b", text.lower())
+        tokens = re.findall(r"\b\w+\b", text.lower())
+        return self.stemmer.stem_tokens(tokens)
 
     # ---------- build ---------- #
     def build_index(self, chunks: List[Chunk]) -> None:

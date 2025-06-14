@@ -1,54 +1,36 @@
-# retrieving/hybrid_retriever/hybrid_retriever.py
 from typing import List, Tuple, Dict
-from collections import defaultdict
 from retrieving.scoring.vectorial_scorer import VectorialScorer
 from retrieving.scoring.keyword_scorer import KeywordScorer
-from retrieving.utils.document_parser import Document
 
 
 class HybridRetriever:
-    def __init__(self, vectorial_scorer: VectorialScorer, keyword_scorer: KeywordScorer):
+    """
+    Combines scores of vectorial scorer and keyword scorer
+        hybrid = α * vector_score + (1‑α) * keyword_score
+    All scores are on [0, 1]
+    """
+
+    def __init__(self, vector_scorer: VectorialScorer, keyword_scorer: KeywordScorer, alpha: float = 0.5):
+        assert 0.0 <= alpha <= 1.0, "alpha must be in [0,1]"
+        self.vs = vector_scorer
+        self.ks = keyword_scorer
+        self.alpha = alpha
+
+    def search(self, query: str, top_k: int = 10) -> List[Tuple[str, float, float, float]]:
         """
-        Initializes the HybridRetriever with a vectorial and a keyword scorer.
-        Args:
-            vectorial_scorer: An instance of VectorialScorer.
-            keyword_scorer: An instance of KeywordScorer.
+        Returns list of (chunk_id, hybrid_score, vector_score, keyword_score)
         """
-        self.vectorial_scorer = vectorial_scorer
-        self.keyword_scorer = keyword_scorer
-        self.documents_map = vectorial_scorer.documents_map  # Use the map from one of the scorers
+        vec_results = dict(self.vs.score(query, k=top_k * 2))          # id -> score (0‑1)
+        key_results = dict(self.ks.score(query, top_k * 2, normalize=True))
 
-    def retrieve(self, query: str, k: int = 5) -> List[Tuple[Document, float]]:
-        """
-        Retrieves and ranks documents using a hybrid approach.
-        Combines scores from vectorial and keyword-based retrieval using Reciprocal Rank Fusion (RRF).
-        Args:
-            query: The natural language query string.
-            k: The number of top documents to return.
-        Returns:
-            A list of (Document object, combined_score) tuples, sorted by combined_score descending.
-        """
-        # Retrieve results from both scorers, fetching more candidates than k
-        vector_results = self.vectorial_scorer.score(query, k=k * 2)  # Fetch more to allow for better RRF
-        keyword_results = self.keyword_scorer.score(query, k=k * 2)  # Fetch more to allow for better RRF
+        all_ids = set(vec_results) | set(key_results)
+        hybrid_scores: Dict[str, Tuple[float, float, float]] = {}
 
-        combined_scores: Dict[str, float] = defaultdict(float)
-        rrf_k_const = 60.0  # A common constant for RRF, adjust as needed
+        for cid in all_ids:
+            v = vec_results.get(cid, 0.0)
+            k = key_results.get(cid, 0.0)
+            h = self.alpha * v + (1 - self.alpha) * k
+            hybrid_scores[cid] = (h, v, k)
 
-        # Apply Reciprocal Rank Fusion (RRF)
-        # Process vectorial results
-        for rank, (doc, _) in enumerate(vector_results):
-            combined_scores[doc.id] += 1.0 / (rrf_k_const + rank + 1)
-
-        # Process keyword results
-        for rank, (doc, _) in enumerate(keyword_results):
-            combined_scores[doc.id] += 1.0 / (rrf_k_const + rank + 1)
-
-        # Sort combined results by score
-        sorted_results = sorted(
-            [(self.documents_map[doc_id], score) for doc_id, score in combined_scores.items()],
-            key=lambda x: x[1],
-            reverse=True
-        )
-
-        return sorted_results[:k]
+        ranked = sorted(hybrid_scores.items(), key=lambda x: x[1][0], reverse=True)[:top_k]
+        return [(cid, h, v, k) for cid, (h, v, k) in ranked]
