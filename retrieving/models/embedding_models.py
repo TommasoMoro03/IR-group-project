@@ -1,23 +1,24 @@
 from transformers import AutoTokenizer, AutoModel
 import numpy as np
 import torch
+from typing import List
 
 
 class EmbeddingModel:
     def __init__(self, model_name: str = "BAAI/bge-small-en-v1.5"):
-        # be sure that the model is loaded in eval mode
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModel.from_pretrained(model_name)
         self.model.eval()
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model.to(self.device)
 
-    def encode(self, texts: list[str]) -> np.ndarray:
-        """
-        Function that takes in input a list of strings and returns a numpy array of the corresponding embeddings.
-        """
+    def encode(self, texts: List[str], is_query: bool = False) -> np.ndarray:
         if not texts:
             return np.array([])
+
+        # BGE: prepend "Query: " to queries if needed
+        if is_query:
+            texts = [f"Query: {text}" for text in texts]
 
         inputs = self.tokenizer(
             texts,
@@ -31,14 +32,13 @@ class EmbeddingModel:
 
         token_embeddings = model_output.last_hidden_state
         attention_mask = inputs['attention_mask']
-
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
 
-        sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
-        sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+        sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+        sum_mask = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
         sentence_embeddings = sum_embeddings / sum_mask
 
-        # normalize the embeddings
+        # normalize to unit vector
         sentence_embeddings = torch.nn.functional.normalize(sentence_embeddings, p=2, dim=1)
 
         return sentence_embeddings.cpu().numpy()
