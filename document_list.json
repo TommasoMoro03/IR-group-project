@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "article_001.txt",
+    "title": "The Future of AI in Healthcare",
+    "url": "https://example.com/ai-healthcare",
+    "metadata": {
+      "category": "Technology",
+      "date": "2023-10-01"
+    }
+  },
+  {
+    "filename": "article_002.txt",
+    "title": "Climate Change and Global Policy",
+    "url": "https://example.com/climate-policy",
+    "metadata": {
+      "category": "Environment",
+      "date": "2023-11-15"
+    }
+  }
+]
