@@ -1,46 +1,46 @@
-# retrieving/indexing/inverted_index.py
-from collections import defaultdict
 import re
-from typing import List, Dict
+from collections import defaultdict, Counter
+from typing import Dict, List, Tuple
+from retrieving.utils.models import Chunk
+
 
 class InvertedIndex:
+    """
+    word  -> list[(chunk_id, tf)]
+    chunk_id -> dl  (document length in tokens)
+    N = #chunk   | avg_dl = average document length
+    """
+
     def __init__(self):
-        """Initializes the inverted index."""
-        self.index = defaultdict(list)  # Maps term -> list of document_ids
-        self.doc_lengths = {}           # Stores document lengths (e.g., for future TF-IDF)
+        self.index: Dict[str, List[Tuple[str, int]]] = defaultdict(list)
+        self.chunk_lengths: Dict[str, int] = {}
+        self.N: int = 0
+        self.avg_dl: float = 0.0
 
+    # ---------- helpers ---------- #
     def _tokenize(self, text: str) -> List[str]:
-        """
-        Simple text tokenization: lowercase and extract alphanumeric words.
-        """
-        return [token.lower() for token in re.findall(r'\b\w+\b', text)]
+        return re.findall(r"\b\w+\b", text.lower())
 
-    def add_document(self, doc_id: str, text: str):
+    # ---------- build ---------- #
+    def build_index(self, chunks: List[Chunk]) -> None:
         """
-        Adds a document's content to the inverted index.
-        Args:
-            doc_id: Unique identifier for the document.
-            text: The cleaned text content of the document.
+        Fills self.index, self.chunk_lengths, self.N, self.avg_dl
         """
-        tokens = self._tokenize(text)
-        self.doc_lengths[doc_id] = len(tokens) # Store document length
+        for chunk in chunks:
+            tokens = self._tokenize(chunk.text)
+            self.chunk_lengths[chunk.id] = len(tokens)
 
-        # Add document ID to posting list for each unique token in the document
-        unique_tokens_in_doc = set(tokens)
-        for token in unique_tokens_in_doc:
-            self.index[token].append(doc_id)
+            term_freqs = Counter(tokens)        # tf in this chunk
+            for term, tf in term_freqs.items():
+                self.index[term].append((chunk.id, tf))
 
-    def search(self, query_tokens: List[str]) -> Dict[str, int]:
-        """
-        Performs a keyword search, returning document IDs and their match counts.
-        Args:
-            query_tokens: A list of pre-tokenized query terms.
-        Returns:
-            A dictionary mapping document_id to the count of query keywords
-            that match within that document.
-        """
-        doc_scores = defaultdict(int)
-        for token in query_tokens:
-            for doc_id in self.index.get(token, []): # Iterate through posting list for the token
-                doc_scores[doc_id] += 1 # Increment score for each match
-        return doc_scores
+        self.N = len(chunks)
+        if self.N:
+            self.avg_dl = sum(self.chunk_lengths.values()) / self.N
+
+    # ---------- accessors ---------- #
+    def get_postings(self, term: str) -> List[Tuple[str, int]]:
+        return self.index.get(term.lower(), [])
+
+    def df(self, term: str) -> int:
+        return len(self.index.get(term.lower(), []))

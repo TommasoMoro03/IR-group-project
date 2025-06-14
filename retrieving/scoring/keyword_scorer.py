@@ -1,49 +1,55 @@
+import re
+import math
+from collections import Counter, defaultdict
 from typing import List, Tuple
 from retrieving.indexing.inverted_index import InvertedIndex
-from retrieving.utils.document_parser import Document
-import re
 
 
 class KeywordScorer:
-    def __init__(self, inverted_index: InvertedIndex, documents: List[Document]):
-        """
-        Initializes the KeywordScorer.
-        Args:
-            inverted_index: An instance of InvertedIndex already built.
-            documents: A list of Document objects from the corpus.
-        """
-        self.inverted_index = inverted_index
-        self.documents_map = {doc.id: doc for doc in documents}
+    """
+    BM25 scorer (k1, b) using an InvertedIndex.
+    """
 
-    def _tokenize_query(self, query: str) -> list[str]:
+    def __init__(self, inverted_index: InvertedIndex, k1: float = 1.2, b: float = 0.75):
+        self.inv = inverted_index
+        self.k1 = k1
+        self.b = b
+
+    # ---------- helpers ---------- #
+    def _tokenize(self, text: str) -> List[str]:
+        return re.findall(r"\b\w+\b", text.lower())
+
+    def _idf(self, df: int) -> float:
         """
-        Simple tokenization for the query.
-        Converts to lowercase and extracts alphanumeric words.
+        BM25 IDF with +1 smoothing to avoid negatives.
         """
-        return [token.lower() for token in re.findall(r'\b\w+\b', query)]
+        N = self.inv.N
+        return math.log((N - df + 0.5) / (df + 0.5) + 1)
 
-    def score(self, query: str, k: int = 5) -> List[Tuple[Document, float]]:
+    # ---------- main API ---------- #
+    def score(self, query: str, top_k: int = 5) -> List[Tuple[str, float]]:
         """
-        Scores documents based on keyword matching using the inverted index.
-        Args:
-            query: The natural language query string.
-            k: The number of top documents to return.
-        Returns:
-            A list of (Document object, score) tuples, sorted by score descending.
+        Returns top_k (chunk_id, bm25_score) tuples.
         """
-        query_tokens = self._tokenize_query(query)
+        query_terms = self._tokenize(query)
+        query_freqs = Counter(query_terms)
 
-        # Get raw keyword match counts from the inverted index
-        # This returns a dict {doc_id: count_of_matching_keywords}
-        doc_keyword_counts = self.inverted_index.search(query_tokens)
+        scores = defaultdict(float)
 
-        # Convert to list of (Document, score) tuples and sort
-        results = []
-        for doc_id, count in doc_keyword_counts.items():
-            # Use the count of matching keywords as the score
-            results.append((self.documents_map[doc_id], float(count)))
+        for term, qf in query_freqs.items():
+            postings = self.inv.get_postings(term)
+            df = self.inv.df(term)
+            if df == 0:
+                continue
 
-        # Sort by score in descending order
-        results.sort(key=lambda x: x[1], reverse=True)
+            idf = self._idf(df)
 
-        return results[:k]
+            for chunk_id, tf in postings:
+                dl = self.inv.chunk_lengths[chunk_id]
+                numerator = tf * (self.k1 + 1)
+                denominator = tf + self.k1 * (1 - self.b + self.b * dl / self.inv.avg_dl)
+                scores[chunk_id] += idf * numerator / denominator
+
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
+        # convert Decimal→float for JSON‑serialisability
+        return [(cid, float(sc)) for cid, sc in ranked]
