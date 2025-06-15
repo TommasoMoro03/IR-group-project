@@ -3,6 +3,7 @@ import json
 import os
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 def extract_main_text(html):
     """
@@ -22,17 +23,18 @@ def extract_main_text(html):
     # Cerca il <main>
     possible_main = page.find('main')
     
+    # Estrae tutti i paragrafi dal <main>, se presente
     if possible_main:
-        # Se trova <main>, prende solo il testo al suo interno
-        text = possible_main.get_text()
+        paragraphs = possible_main.find_all('p')
     else:
-        # Altrimenti prende tutto il testo della pagina (potrebbe includere rumore)
-        text = page.get_text()
+        paragraphs = page.find_all('p')
 
-    # Se ci sono spazi multipli e newline, li rimuove, sostituendoli con uno spazio singolo
-    text = ' '.join(text.split())
+    # Pulisce ogni paragrafo e li mette su righe separate
+    clean_paragraphs = [p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)]
 
-    # Restituisce il testo pulito e il titolo
+    # Unisce i paragrafi con una newline
+    text = '\n\n'.join(clean_paragraphs)
+
     return text, title
 
 
@@ -54,6 +56,54 @@ def download_html(url):
         return ""
     
 
+def get_category():
+    """
+    Chiede all'utente di inserire una categoria valida non vuota.
+    """
+    while True:
+        category = input("Categoria dell'articolo (es: politica, esteri, scienza...): ").strip()
+        if category:
+            return category
+        print("Inserisci una categoria valida.")
+
+
+def get_date():
+    """
+    Chiede all'utente di inserire una data valida nel formato YYYY-MM-DD.
+    """
+    while True:
+        date = input("Data dell'articolo (formato YYYY-MM-DD): ").strip()
+        try:
+            # Prova a convertire la stringa in una data vera
+            datetime.strptime(date, "%Y-%m-%d")
+            # Se la data è valida, esce dal ciclo e restituisce la data
+            return date
+        except ValueError:   
+            # Se la data non è valida, ripete il ciclo
+            print("Formato data non valido, riprova.")
+
+
+def get_next_filename(folder="documents", prefix="articolo_", ext=".txt"):
+    """
+    Calcola il nome del prossimo file da salvare in modo progressivo e senza duplicati.
+    """
+    os.makedirs(folder, exist_ok=True)  # crea la cartella se non esiste
+
+    # Lista file nella cartella che rispettano il formato nome
+    files = [f for f in os.listdir(folder) if f.startswith(prefix) and f.endswith(ext)]
+
+    # Estrai numeri progressivi dai nomi file
+    nums = []
+    for f in files:
+        num_part = f[len(prefix):-len(ext)]
+        if num_part.isdigit():
+            nums.append(int(num_part))
+
+    next_num = max(nums) + 1 if nums else 1
+    filename = f"{prefix}{next_num:03d}{ext}"
+    return filename
+
+
 def main():
     """
     Funzione principale che gestisce il flusso del programma:
@@ -69,11 +119,13 @@ def main():
     # Se l'argomento è un URL (http o https), scarica l'HTML
     if arg.startswith("http://") or arg.startswith("https://"):
         html = download_html(arg)
+        url = arg
 
     # Se invece è un file esistente, lo legge
     elif os.path.isfile(arg):
         with open(arg, "r", encoding="utf-8") as f:
             html = f.read()
+        url = "file://" + os.path.abspath(arg)
 
     # Altrimenti se non è URL né file, esce con errore
     else:
@@ -83,12 +135,29 @@ def main():
     # Estrae testo pulito e titolo dalla pagina HTML
     clean_text, title = extract_main_text(html)
 
-    # Crea la cartella 'documents' se non esiste, dove salvare i testi
-    os.makedirs("documents", exist_ok=True)
+    # Chiede category e date all’utente
+    category = get_category()
+    date = get_date()
 
-    # Crea un nome file univoco basato sul numero di file già presenti
-    filename = f"articolo_{len(os.listdir('documents')) + 1}.txt"
-    filepath = os.path.join("documents", filename)
+    # Crea la cartella 'documents' se non esiste, dove salvare i testi
+    folder = "documents"
+    filename = get_next_filename(folder=folder)
+    filepath = os.path.join(folder, filename)
+
+     # File dove vengono salvati tutti i record, cioè l’indice degli articoli
+    index_path = "index.json"
+
+    # Carica l'indice JSON se esiste
+    if os.path.exists(index_path):
+        with open(index_path, "r", encoding="utf-8") as f:
+            index_data = json.load(f)
+    else:
+        index_data = []
+
+    # Controllo duplicati URL nell'indice (per non salvare più volte lo stesso articolo)
+    if any(r.get("url") == url for r in index_data):
+        print("Articolo già presente nell'indice. Nessun nuovo salvataggio effettuato.")
+        return
 
     # Salva il testo pulito nel file appena creato
     with open(filepath, "w", encoding="utf-8") as f:
@@ -96,35 +165,21 @@ def main():
 
     # Costruisce il record da inserire nell'indice JSON
     record = {
-        "filename": filename, # nome .txt con cui è salvato nella cartella
-        "title": title, # preso dal tag <title> html
-        "url": arg, # l'url dell'articolo a cui si riferisce
-        "metadata": {} # eventuali altri attributi utili, es. categoria
+        "filename": filename,  # nome .txt con cui è salvato nella cartella
+        "title": title,        # preso dal tag <title> html
+        "url": url,            # url o file a cui si riferisce
+        "metadata": {
+            "category": category,  # categoria presa in input dall'utente
+            "date": date           # data presa in input dall'utente
+        }
     }
 
-    # File dove vengono salvati tutti i record, cioè l’indice degli articoli
-    index_file = "index.json"
-
-    # Se esiste già un file index.json, lo apre e carica i dati già salvati in una lista Python
-    if os.path.exists(index_file):
-        with open(index_file, "r", encoding="utf-8") as f:
-            index_data = json.load(f)
-    else:
-        # Se non esiste, crea una lista vuota
-        index_data = []
-
-    # Aggiunge il nuovo record alla lista
+    # Aggiunge il nuovo record alla lista e riscrive index.json
     index_data.append(record)
-
-    # Riscrive index.json con il record aggiornato
-    with open(index_file, "w", encoding="utf-8") as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index_data, f, ensure_ascii=False, indent=2)
-        # dove:
-        # json.dump converte la lista Python in formato JSON e la salva nel file
-        # ensure_ascii=False serve per salvare correttamente i caratteri speciali (accenti)
-        # indent=2 serve per formattare il file in modo tale che sia leggibile
-        
-    # Stampa della conferma che il file è stato salvato
+
+    # Conferma all'utente che il file è stato salvato
     print(f"Salvato {filename} e aggiornato index.json")
 
 
