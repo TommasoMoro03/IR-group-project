@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "articolo_001.txt",
+    "title": "Alle 23 di domenica l'affluenza ai referendum è stata di circa il 22 per cento - Il Post",
+    "url": "https://www.ilpost.it/2025/06/08/affluenza-referendum/",
+    "metadata": {
+      "category": "politica",
+      "date": "2025-06-08"
+    }
+  },
+  {
+    "filename": "articolo_002.txt",
+    "title": "Il governo slovacco ha imboscato un busto attribuito a Donatello - Il Post",
+    "url": "https://www.ilpost.it/2025/06/09/caso-statua-donatello-scoperta-slovacchia/",
+    "metadata": {
+      "category": "mondo",
+      "date": "2025-06-09"
+    }
+  }
+]
