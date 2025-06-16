@@ -1,20 +1,524 @@
 [
   {
-    "filename": "article_001.txt",
-    "title": "The Future of AI in Healthcare",
-    "url": "https://example.com/ai-healthcare",
+    "filename": "articolo_001.txt",
+    "title": "La “marcia verso Gaza” per ora è bloccata - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/global-march-to-gaza-bloccata/",
     "metadata": {
-      "category": "Technology",
-      "date": "2023-10-01"
+      "category": "global-march-to-gaza-bloccata",
+      "date": "2025-06-16"
     }
   },
   {
-    "filename": "article_002.txt",
-    "title": "Climate Change and Global Policy",
-    "url": "https://example.com/climate-policy",
+    "filename": "articolo_002.txt",
+    "title": "Diversi calciatori della Salernitana sono stati portati in ospedale per una sospetta intossicazione alimentare - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/calciatori-salernitana-intossicazione-alimentare-ospedale-playout-sampdoria/",
     "metadata": {
-      "category": "Environment",
-      "date": "2023-11-15"
+      "category": "calciatori-salernitana-intossicazione-alimentare-ospedale-playout-sampdoria",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_003.txt",
+    "title": "Luca De Meo non sarà più l'amministratore delegato di Renault - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/luca-de-meo-dimissioni-amministratore-delegato-renault/",
+    "metadata": {
+      "category": "luca-de-meo-dimissioni-amministratore-delegato-renault",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_004.txt",
+    "title": "La Russia ha consegnato all'Ucraina i corpi di altre 1.200 persone uccise durante la guerra - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/russia-restituzione-corpi-ucraini-uccisi/",
+    "metadata": {
+      "category": "russia-restituzione-corpi-ucraini-uccisi",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_005.txt",
+    "title": "Almeno 19 persone sono morte in un'alluvione a Kinshasa, nella Repubblica Democratica del Congo - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/19-persone-morte-kinshasa-repubblica-democratica-del-congo-alluvioni/",
+    "metadata": {
+      "category": "19-persone-morte-kinshasa-repubblica-democratica-del-congo-alluvioni",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_006.txt",
+    "title": "A Nicolas Sarkozy è stata tolta la Legion d'Onore - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/sarkozy-tolta-legione-donore/",
+    "metadata": {
+      "category": "sarkozy-tolta-legione-donore",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_007.txt",
+    "title": "Tre medici sono stati condannati per aver falsificato un certificato medico del calciatore Davide Astori, morto nel 2018 - Il Post",
+    "url": "https://www.ilpost.it/2025/06/14/medici-condannati-morte-astori-certificato-medico-falso/",
+    "metadata": {
+      "category": "medici-condannati-morte-astori-certificato-medico-falso",
+      "date": "2025-06-14"
+    }
+  },
+  {
+    "filename": "articolo_008.txt",
+    "title": "Nel 2024 Donald Trump ha guadagnato quasi 60 milioni di dollari con le criptovalute - Il Post",
+    "url": "https://www.ilpost.it/2025/06/14/donald-trump-guadagni-cripto-valute/",
+    "metadata": {
+      "category": "donald-trump-guadagni-cripto-valute",
+      "date": "2025-06-14"
+    }
+  },
+  {
+    "filename": "articolo_009.txt",
+    "title": "Perché d'estate sui treni o fa caldissimo o si congela - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/tutto-aria-condizionata-treni/?homepagePosition=1",
+    "metadata": {
+      "category": "tutto-aria-condizionata-treni",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_010.txt",
+    "title": "Treno veloce, WiFi lento - Il Post",
+    "url": "https://www.ilpost.it/2025/05/06/alta-velocita-wifi-frecciarossa-italo/",
+    "metadata": {
+      "category": "alta-velocita-wifi-frecciarossa-italo",
+      "date": "2025-05-06"
+    }
+  },
+  {
+    "filename": "articolo_011.txt",
+    "title": "Da dove arriva Kimi Antonelli - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/kimi-antonelli-chi-e-formula-1/?homepagePosition=2",
+    "metadata": {
+      "category": "kimi-antonelli-chi-e-formula-1",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_012.txt",
+    "title": "Il primo podio di un pilota italiano in Formula 1 dal 2009 - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/gran-premio-canada-formula-1-vittoria-george-russell/",
+    "metadata": {
+      "category": "gran-premio-canada-formula-1-vittoria-george-russell",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_013.txt",
+    "title": "Le Ferrari vanno piano da anni, ma nessuno pensava andassero così piano - Il Post",
+    "url": "https://www.ilpost.it/2025/05/05/ferrari-f1-delusione-crisi-hamilton-leclerc-team-radio/",
+    "metadata": {
+      "category": "ferrari-f1-delusione-crisi-hamilton-leclerc-team-radio",
+      "date": "2025-05-05"
+    }
+  },
+  {
+    "filename": "articolo_014.txt",
+    "title": "Israele ha distrutto le difese aeree dell'Iran? - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/superiorita-aerea-israele-iran/?homepagePosition=3",
+    "metadata": {
+      "category": "superiorita-aerea-israele-iran",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_015.txt",
+    "title": "Gli attacchi di Israele ai siti energetici iraniani - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/attacchi-israele-centri-petrolio-gas-iran/",
+    "metadata": {
+      "category": "attacchi-israele-centri-petrolio-gas-iran",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_016.txt",
+    "title": "In tutto questo, dove si trova Ali Khamenei? - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/ali-khamenei-dove-si-trova/?homepagePosition=4",
+    "metadata": {
+      "category": "ali-khamenei-dove-si-trova",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_017.txt",
+    "title": "È stato arrestato l'uomo accusato di aver ucciso la deputata statale del Minnesota - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/arrestato-vance-boelter-deputata-minnesota-uccisa/?homepagePosition=5",
+    "metadata": {
+      "category": "arrestato-vance-boelter-deputata-minnesota-uccisa",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_018.txt",
+    "title": "Ben Smith a Milano, col Post - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/ben-smith-milano-il-post/?homepagePosition=6",
+    "metadata": {
+      "category": "ben-smith-milano-il-post",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_019.txt",
+    "title": "L'ultimo bel giorno di internet - Il Post",
+    "url": "https://www.ilpost.it/2024/05/09/traffic-ben-smith-libri-altrecose/",
+    "metadata": {
+      "category": "traffic-ben-smith-libri-altrecose",
+      "date": "2024-05-09"
+    }
+  },
+  {
+    "filename": "articolo_020.txt",
+    "title": "A Venezia è nato un comitato contro il matrimonio di Jeff Bezos - Il Post",
+    "url": "https://www.ilpost.it/2025/06/14/comitato-venezia-contro-matrimonio-jeff-bezos/?homepagePosition=7",
+    "metadata": {
+      "category": "comitato-venezia-contro-matrimonio-jeff-bezos",
+      "date": "2025-06-14"
+    }
+  },
+  {
+    "filename": "articolo_021.txt",
+    "title": "Le città spagnole contro il turismo di massa - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/spagna-citta-proteste-contro-turismo-di-massa/?homepagePosition=8",
+    "metadata": {
+      "category": "spagna-citta-proteste-contro-turismo-di-massa",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_022.txt",
+    "title": "Cosa sta succedendo attorno alla crisi abitativa in Spagna - Il Post",
+    "url": "https://www.ilpost.it/2025/04/06/manifestazioni-spagna-crisi-abitativa/",
+    "metadata": {
+      "category": "manifestazioni-spagna-crisi-abitativa",
+      "date": "2025-04-06"
+    }
+  },
+  {
+    "filename": "articolo_023.txt",
+    "title": "A Venezia è nato un comitato contro il matrimonio di Jeff Bezos - Il Post",
+    "url": "https://www.ilpost.it/2025/06/14/comitato-venezia-contro-matrimonio-jeff-bezos/",
+    "metadata": {
+      "category": "comitato-venezia-contro-matrimonio-jeff-bezos",
+      "date": "2025-06-14"
+    }
+  },
+  {
+    "filename": "articolo_024.txt",
+    "title": "L'autore di fantascienza amatissimo da Musk e dalla Silicon Valley - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/iain-banks-broligarchi/?homepagePosition=9",
+    "metadata": {
+      "category": "iain-banks-broligarchi",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_025.txt",
+    "title": "Come mai Gramsci piace ai trumpiani - Il Post",
+    "url": "https://www.ilpost.it/2025/05/05/gramsci-trump-destra-americana/",
+    "metadata": {
+      "category": "gramsci-trump-destra-americana",
+      "date": "2025-05-05"
+    }
+  },
+  {
+    "filename": "articolo_026.txt",
+    "title": "A Capri sarà vietato disturbare i turisti per fare pubblicità - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/capri-ordinanza-divieto-disturbare-i-turisti/?homepagePosition=10",
+    "metadata": {
+      "category": "capri-ordinanza-divieto-disturbare-i-turisti",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_027.txt",
+    "title": "Per i palestinesi di Israele non ci sono abbastanza rifugi antiaerei - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/rifugi-antiaerei-israeliani-palestinesi/?homepagePosition=11",
+    "metadata": {
+      "category": "rifugi-antiaerei-israeliani-palestinesi",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_028.txt",
+    "title": "L'attacco iraniano su Rehovot, raccontato da lì - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/racconto-rehovot-israele-attacco-iran/",
+    "metadata": {
+      "category": "racconto-rehovot-israele-attacco-iran",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_029.txt",
+    "title": "Chi sono gli israeliani? - Il Post",
+    "url": "https://www.ilpost.it/2023/10/31/chi-sono-gli-israeliani/",
+    "metadata": {
+      "category": "chi-sono-gli-israeliani",
+      "date": "2023-10-31"
+    }
+  },
+  {
+    "filename": "articolo_030.txt",
+    "title": "L'attacco iraniano su Rehovot, raccontato da lì - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/racconto-rehovot-israele-attacco-iran/?homepagePosition=12",
+    "metadata": {
+      "category": "racconto-rehovot-israele-attacco-iran",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_031.txt",
+    "title": "Le foto dei danni in Israele causati dagli attacchi iraniani - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/foto-danni-israele-attacchi-iran/",
+    "metadata": {
+      "category": "foto-danni-israele-attacchi-iran",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_032.txt",
+    "title": "La Nazionale ha scelto come allenatore Gennaro Gattuso, uno da situazioni ingarbugliate - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/gattuso-nuovo-allenatore-nazionale-italia/?homepagePosition=13",
+    "metadata": {
+      "category": "gattuso-nuovo-allenatore-nazionale-italia",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_033.txt",
+    "title": "Cosa non ha funzionato tra Spalletti e la Nazionale, in campo e fuori - Il Post",
+    "url": "https://www.ilpost.it/2025/06/10/spalletti-nazionale-fallimento-problemi/",
+    "metadata": {
+      "category": "spalletti-nazionale-fallimento-problemi",
+      "date": "2025-06-10"
+    }
+  },
+  {
+    "filename": "articolo_034.txt",
+    "title": "Gennaro Gattuso trova problemi - Il Post",
+    "url": "https://www.ilpost.it/2024/12/19/gennaro-gattuso-allenatore-esperienze-problemi-hajduk-spalato-croazia/",
+    "metadata": {
+      "category": "gennaro-gattuso-allenatore-esperienze-problemi-hajduk-spalato-croazia",
+      "date": "2024-12-19"
+    }
+  },
+  {
+    "filename": "articolo_035.txt",
+    "title": "Ben Smith a Milano, col Post - Il Post",
+    "url": "https://www.ilpost.it/2025/06/16/ben-smith-milano-il-post/",
+    "metadata": {
+      "category": "ben-smith-milano-il-post",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_036.txt",
+    "title": "Arriva Montecit., la newsletter del Post per capire la politica - Il Post",
+    "url": "https://www.ilpost.it/2025/06/06/montecit-newsletter-politica/",
+    "metadata": {
+      "category": "montecit-newsletter-politica",
+      "date": "2025-06-06"
+    }
+  },
+  {
+    "filename": "articolo_037.txt",
+    "title": "La storia incredibile del Gattopardo, a Talk - Il Post",
+    "url": "https://www.ilpost.it/2025/05/30/gattopardo-francesco-piccolo-talk-verona/",
+    "metadata": {
+      "category": "gattopardo-francesco-piccolo-talk-verona",
+      "date": "2025-05-30"
+    }
+  },
+  {
+    "filename": "articolo_038.txt",
+    "title": "Il problema della Germania con il mondo ebraico - Il Post",
+    "url": "https://www.ilpost.it/2025/06/14/janeczek-il-problema-della-germania-con-il-mondo-ebraico/",
+    "metadata": {
+      "category": "janeczek-il-problema-della-germania-con-il-mondo-ebraico",
+      "date": "2025-06-14"
+    }
+  },
+  {
+    "filename": "articolo_039.txt",
+    "title": "I nostri insegnanti si ricordano di noi? - Il Post",
+    "url": "https://www.ilpost.it/2025/06/11/romano-i-nostri-insegnanti-si-ricordano-di-noi/",
+    "metadata": {
+      "category": "romano-i-nostri-insegnanti-si-ricordano-di-noi",
+      "date": "2025-06-11"
+    }
+  },
+  {
+    "filename": "articolo_040.txt",
+    "title": "Di figli all'estero, zucchine e referendum - Il Post",
+    "url": "https://www.ilpost.it/2025/06/07/cirri-di-figli-allestero-zucchine-e-referendum/",
+    "metadata": {
+      "category": "cirri-di-figli-allestero-zucchine-e-referendum",
+      "date": "2025-06-07"
+    }
+  },
+  {
+    "filename": "articolo_041.txt",
+    "title": "Lite alla cattedrale - Il Post",
+    "url": "https://www.ilpost.it/2025/06/04/czako-lite-alla-cattedrale/",
+    "metadata": {
+      "category": "czako-lite-alla-cattedrale",
+      "date": "2025-06-04"
+    }
+  },
+  {
+    "filename": "articolo_042.txt",
+    "title": "Appunti sulla boxe e sui KO - Il Post",
+    "url": "https://www.ilpost.it/2025/05/31/grossi-appunti-sulla-boxe-e-sui-k-o/",
+    "metadata": {
+      "category": "grossi-appunti-sulla-boxe-e-sui-k-o",
+      "date": "2025-05-31"
+    }
+  },
+  {
+    "filename": "articolo_043.txt",
+    "title": "Quanto fu fascista Giovanni Gentile? - Il Post",
+    "url": "https://www.ilpost.it/2025/05/28/raimo-quanto-fu-fascista-giovanni-gentile/",
+    "metadata": {
+      "category": "raimo-quanto-fu-fascista-giovanni-gentile",
+      "date": "2025-05-28"
+    }
+  },
+  {
+    "filename": "articolo_044.txt",
+    "title": "Io sono la fabbrica - Il Post",
+    "url": "https://www.ilpost.it/2025/05/24/cubo-io-sono-la-fabbrica/",
+    "metadata": {
+      "category": "cubo-io-sono-la-fabbrica",
+      "date": "2025-05-24"
+    }
+  },
+  {
+    "filename": "articolo_045.txt",
+    "title": "Il razzismo in America Latina - Il Post",
+    "url": "https://www.ilpost.it/2025/05/21/saba-il-razzismo-in-america-latina/",
+    "metadata": {
+      "category": "saba-il-razzismo-in-america-latina",
+      "date": "2025-05-21"
+    }
+  },
+  {
+    "filename": "articolo_046.txt",
+    "title": "Le cose che restano (e quelle che no) - Il Post",
+    "url": "https://www.ilpost.it/2025/05/17/guerzoni-le-cose-che-restano-e-quelle-che-no/",
+    "metadata": {
+      "category": "guerzoni-le-cose-che-restano-e-quelle-che-no",
+      "date": "2025-05-17"
+    }
+  },
+  {
+    "filename": "articolo_047.txt",
+    "title": "Struggersi di nostalgia per i tronisti - Il Post",
+    "url": "https://www.ilpost.it/2025/05/14/valoppi-struggersi-di-nostalgia-per-i-tronisti/",
+    "metadata": {
+      "category": "valoppi-struggersi-di-nostalgia-per-i-tronisti",
+      "date": "2025-05-14"
+    }
+  },
+  {
+    "filename": "articolo_048.txt",
+    "title": "Altre storie notevoli di unici superstiti in incidenti aerei - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/unici-sopravvissuti-disastri-aerei/",
+    "metadata": {
+      "category": "unici-sopravvissuti-disastri-aerei",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_049.txt",
+    "title": "Scoprire di essere omosessuali da adulte - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/lesbiche-tardive-comunita/",
+    "metadata": {
+      "category": "lesbiche-tardive-comunita",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_050.txt",
+    "title": "Una Ferrari ha vinto la 24 ore di Le Mans, di nuovo - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/ferrari-24-ore-le-mans-2025/",
+    "metadata": {
+      "category": "ferrari-24-ore-le-mans-2025",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_051.txt",
+    "title": "Storia di un aeroporto quasi sempre vuoto - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/aeroporto-comiso-sicilia-deserto/",
+    "metadata": {
+      "category": "aeroporto-comiso-sicilia-deserto",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_052.txt",
+    "title": "Se si vuole pogare è meglio spegnere lo smartwatch - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/smartwatch-download-festival/",
+    "metadata": {
+      "category": "smartwatch-download-festival",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_053.txt",
+    "title": "Il primo processo a un soldato russo accusato in Ucraina di aver ucciso un prigioniero di guerra - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/primo-processo-soldato-russo-uccisione-prigioniero-guerra-ucraina/",
+    "metadata": {
+      "category": "primo-processo-soldato-russo-uccisione-prigioniero-guerra-ucraina",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_054.txt",
+    "title": "Cosa c'è nell'inchiesta sulla sindaca di Prato Ilaria Bugetti - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/inchiesta-ilaria-bugetti-prato-corruzione/",
+    "metadata": {
+      "category": "inchiesta-ilaria-bugetti-prato-corruzione",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_055.txt",
+    "title": "Lo Studio Ghibli va avanti a modo suo - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/40-anni-studio-ghibli/",
+    "metadata": {
+      "category": "40-anni-studio-ghibli",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_056.txt",
+    "title": "Fuori e dentro il Corviale - Il Post",
+    "url": "https://www.ilpost.it/2025/06/15/corviale-riqualificazione-regione-comune/",
+    "metadata": {
+      "category": "corviale-riqualificazione-regione-comune",
+      "date": "2025-06-15"
+    }
+  },
+  {
+    "filename": "articolo_057.txt",
+    "title": "Weekly Beasts - Il Post",
+    "url": "https://www.ilpost.it/2025/06/14/weekly-beasts-543/",
+    "metadata": {
+      "category": "weekly-beasts-543",
+      "date": "2025-06-14"
+    }
+  },
+  {
+    "filename": "articolo_058.txt",
+    "title": "Celebripost - Il Post",
+    "url": "https://www.ilpost.it/2025/06/13/celebripost-571/",
+    "metadata": {
+      "category": "celebripost-571",
+      "date": "2025-06-13"
     }
   }
 ]

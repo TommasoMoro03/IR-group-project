@@ -20,18 +20,27 @@ The repository is organized into three main directories, reflecting the logical 
 ### `crawling/`
 
 This directory contains the core logic for our web crawler. Its responsibilities include:
-* **URL Management:** Managing the queue of URLs to be visited (`URL Frontier`).
-* **HTTP Requests:** Handling fetching web pages from the internet.
-* **Politeness:** Ensuring adherence to `robot.txt` directives and implementing time delays between requests to avoid overloading web servers.
-* **Robustness:** Incorporating basic heuristics to prevent common "spider traps" or infinite crawling loops (e.g., depth limits, detection of repetitive URL patterns).
+
+- **URL Frontier Management**: Implements a dual-queue system to manage the crawling frontier. It uses a standard queue for broad exploration and a high-priority queue for pages requiring frequent updates (e.g., live blogs).
+- **HTTP Requests**: Handles fetching web pages from the internet using the requests library.
+- **Politeness**: Ensures adherence to robots.txt directives and implements a configurable time delay between requests to avoid overloading web servers.
+- **Robustness**: Incorporates heuristics to prevent common "spider traps," including a limit on crawling depth (MAX_DEPTH) and a cap on the total number of pages to process (MAX_PAGES_TO_CRAWL).
+- **Freshness Policy**: Actively identifies pages with high-change-rate patterns (e.g., URLs containing /live/) and re-crawls them periodically to ensure the corpus remains up-to-date.
 
 ### `scraping/`
 
-This directory focuses on processing the raw HTML content fetched by the crawler. Its key functionalities are:
-* **HTML Parsing:** Analyzing the downloaded HTML to extract its structural components and raw text.
-* **Main Content Extraction:** Identifying and isolating the primary textual content of a web page, effectively filtering out "boilerplate" elements such as advertisements, navigation links, headers, and footers.
-* **Link Extraction:** Identifying and extracting all internal and external hyperlinks present on a page to feed back into the `crawling` module's URL frontier.
-* **Duplicate and Near-Duplicate Detection:** Implementing mechanisms (e.g., checksumming for exact duplicates and simplified fingerprinting for near-duplicates) to avoid processing and indexing redundant content.
+This directory focuses on processing the raw HTML content fetched by the crawler, turning it into a clean, structured, and non-redundant collection of documents. Its key functionalities are:
+
+- **HTML Parsing**: Uses BeautifulSoup4 to parse HTML and enable DOM navigation.
+- **Article Filtering**: Employs a set of heuristics to distinguish valid articles from other page types (e.g., homepages, category listings). This includes:
+
+  - URL Structure Analysis: Filters for URLs matching a typical article pattern (e.g., containing a date like /YYYY/MM/DD/).
+
+  - Content Length Analysis: Discards pages with a word count below a defined threshold (MIN_ARTICLE_WORDS).
+
+- **Main Content Extraction**: Isolates the primary text of an article by searching for specific HTML containers (e.g., <div class="entry-content">) and implements fallback strategies for robustness.
+- **Link Extraction:** Identifying and extracting all internal and external hyperlinks present on a page to feed back into the `crawling` module's URL frontier.
+- **Duplicate Detection**: Prevents re-processing of the same article by checking the URL of each candidate page against the existing document_list.json index.
 
 ### `retrieving/`
 
@@ -42,25 +51,32 @@ This directory contains all components related to the retrieval phase of the RAG
 ### Main Components
 
 #### 1. Chunking (`utils/chunking.py`)
+
 Each document is split into overlapping chunks based on token count (default: 512 tokens with 30-token overlap).
 
 #### 2. Embedding and Vector Index (`embedding/embedding_model.py`, `indexing/vector_index.py`)
+
 Each chunk is converted into a dense vector using the **BAAI/bge-small-en-v1.5** embedding model. All vectors are normalized and stored in a matrix. Retrieval is performed using cosine similarity.
 
 #### 3. Inverted Index (`indexing/inverted_index.py`)
+
 A custom inverted index is built from scratch. It maps each stemmed token to the list of chunk IDs where it appears, along with the term frequency. Chunk lengths and average document length are also stored for use in BM25 scoring.
 
 #### 4. Keyword Scoring (`scoring/keyword_scorer.py`)
+
 BM25 is implemented from scratch. Scores are computed for each chunk containing query terms. These scores are **normalized to the [0, 1] range** using min-max scaling to enable weighted combination with vector scores.
 
 #### 5. Stemming (`stemming/`)
+
 Two interchangeable stemmers are available:
+
 - `SimpleStemmer`: a basic rule-based implementation.
 - `CustomStemmer`: based on **NLTK’s PorterStemmer**.
 
 You can switch between them by modifying the import in `inverted_index.py` and `keyword_scorer.py`.
 
 #### 6. Hybrid Retriever (`hybrid_retriever/hybrid_retriever.py`)
+
 The hybrid retriever combines vector and keyword scores using a weighted average:
 
 `final_score = α * vector_score + (1 - α) * keyword_score`
@@ -95,16 +111,17 @@ retrieving/
 ```
 
 ### Notes
+
 - The entire indexing and scoring logic is implemented from scratch (no external IR libraries are used).
 - The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
 
 ## Key Features
 
-* **Dynamic Corpus Generation:** Builds its own dataset through controlled web crawling.
-* **Intelligent Content Extraction:** Focuses on relevant main content, minimizing noise.
-* **Duplicate Content Handling:** Avoids redundancy by detecting and managing duplicate and near-duplicate pages.
-* **Hybrid Retrieval System:** Combines the strengths of modern vectorial search with traditional keyword-based methods for robust retrieval.
-* **Natural Language Querying:** Utilizes RAG to answer free-form text queries effectively.
+- **Dynamic Corpus Generation:** Builds its own dataset through controlled web crawling.
+- **Intelligent Content Extraction:** Focuses on relevant main content, minimizing noise.
+- **Duplicate Content Handling:** Avoids redundancy by detecting and managing duplicate and near-duplicate pages.
+- **Hybrid Retrieval System:** Combines the strengths of modern vectorial search with traditional keyword-based methods for robust retrieval.
+- **Natural Language Querying:** Utilizes RAG to answer free-form text queries effectively.
 
 ## Setup and Installation
 
@@ -137,7 +154,6 @@ Instructions on how to run the crawler, process the data, and interact with the 
 
 ## Team Members
 
-* Tommaso Moro
-* Margherita Necchi
-* Ester De Giosa
-
+- Tommaso Moro
+- Margherita Necchi
+- Ester De Giosa

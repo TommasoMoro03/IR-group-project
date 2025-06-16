@@ -16,5 +16,86 @@
       "category": "mondo",
       "date": "2025-06-09"
     }
+  },
+  {
+    "filename": "articolo_002.txt",
+    "title": "Il Post",
+    "url": "https://www.ilpost.it/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_003.txt",
+    "title": "Podcast - Il Post",
+    "url": "https://www.ilpost.it/podcasts/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_004.txt",
+    "title": "Italia - Il Post",
+    "url": "https://www.ilpost.it/italia/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_005.txt",
+    "title": "Mondo - Il Post",
+    "url": "https://www.ilpost.it/mondo/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_006.txt",
+    "title": "Politica - Il Post",
+    "url": "https://www.ilpost.it/politica/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_007.txt",
+    "title": "Tecnologia - Il Post",
+    "url": "https://www.ilpost.it/tecnologia/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_008.txt",
+    "title": "Internet - Il Post",
+    "url": "https://www.ilpost.it/internet/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_009.txt",
+    "title": "Scienza - Il Post",
+    "url": "https://www.ilpost.it/scienza/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
+  },
+  {
+    "filename": "articolo_010.txt",
+    "title": "Cultura - Il Post",
+    "url": "https://www.ilpost.it/cultura/",
+    "metadata": {
+      "category": "generale",
+      "date": "2025-06-16"
+    }
   }
 ]
