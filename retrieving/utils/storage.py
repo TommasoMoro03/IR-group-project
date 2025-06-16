@@ -1,14 +1,15 @@
 import json
 import os
 from typing import List
-
-from nltk.sem.chat80 import items
-
 from .models import Chunk
 
 
 def save_chunks_to_json(chunks: List[Chunk], filepath: str) -> None:
-    # crea la directory se non esiste
+    """
+    This function saves chunks in a json file, so that if they have been computed before,
+    we just need to load them.
+    """
+    # creates the folder where the json will be saved
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
     serializable_chunks = [
@@ -26,6 +27,9 @@ def save_chunks_to_json(chunks: List[Chunk], filepath: str) -> None:
 
 
 def load_chunks_from_json(filepath: str) -> List[Chunk]:
+    """
+    This function loads chunks from a json file.
+    """
     with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
 

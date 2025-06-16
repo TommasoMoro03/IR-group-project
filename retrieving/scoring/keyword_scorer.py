@@ -9,22 +9,22 @@ from retrieving.stemming.custom_stemmer import CustomStemmer
 
 class KeywordScorer:
     """
-    BM25 scorer (k1, b) using an InvertedIndex.
+    Implementation of a BM25 scorer using an InvertedIndex.
+
+    k1 and b are the parameters as seen in class, I have provided default values
+    but they can be set when calling the class
     """
 
     def __init__(self, inverted_index: InvertedIndex, k1: float = 1.2, b: float = 0.75):
         self.inv = inverted_index
         self.k1 = k1
         self.b = b
+        # here CustomStemmer is called, but it can be changed to SimpleStemmer as well (or potentially another stemming implementation)
         self.stemmer = CustomStemmer()
-
-    # ---------- helpers ---------- #
-    def _tokenize(self, text: str) -> List[str]:
-        return re.findall(r"\b\w+\b", text.lower())
 
     def _idf(self, df: int) -> float:
         """
-        BM25 IDF with +1 smoothing to avoid negatives.
+        Calculation of BM25 IDF with +1 smoothing to avoid negatives.
         """
         N = self.inv.N
         return math.log((N - df + 0.5) / (df + 0.5) + 1)
@@ -37,7 +37,7 @@ class KeywordScorer:
     ) -> List[Tuple[str, float]]:
         """
         Returns top_k (chunk_id, bm25_score) tuples.
-        If normalize=True, scores are scaled to [0,1] via min‑max on this query.
+        If normalize=True (default), scores are scaled to [0,1] via min‑max on this query.
         """
         query_terms = self.stemmer.stem_text(query)
         query_freqs = Counter(query_terms)

@@ -11,6 +11,7 @@ from retrieving.stemming.simple_stemmer import SimpleStemmer
 
 class InvertedIndex:
     """
+    Class responsible for storing inverted index of documents.
     word  -> list[(chunk_id, tf)]
     chunk_id -> dl  (document length in tokens)
     N = #chunk   | avg_dl = average document length
@@ -23,36 +24,48 @@ class InvertedIndex:
         self.avg_dl: float = 0.0
         self.stemmer = CustomStemmer()
 
-    # ---------- helpers ---------- #
     def _tokenize(self, text: str) -> List[str]:
+        """
+        function that tokenizes the text and returns a list of stemmed tokens
+        """
         tokens = re.findall(r"\b\w+\b", text.lower())
         return self.stemmer.stem_tokens(tokens)
 
-    # ---------- build ---------- #
     def build_index(self, chunks: List[Chunk]) -> None:
         """
-        Fills self.index, self.chunk_lengths, self.N, self.avg_dl
+        Function that actually builds the inverted index.
         """
         for chunk in chunks:
             tokens = self._tokenize(chunk.text)
             self.chunk_lengths[chunk.id] = len(tokens)
 
-            term_freqs = Counter(tokens)        # tf in this chunk
+            # calculates term frequency in this chunk and append the tuple for every term
+            # Counter is a simple built-in class that creates a dictionary in this way:
+            # Counter(['a', 'b', 'c', 'a']) -> {'a': 2, 'b': 1, 'c': 1}
+            term_freqs = Counter(tokens)
             for term, tf in term_freqs.items():
                 self.index[term].append((chunk.id, tf))
 
         self.N = len(chunks)
         if self.N:
+            # calculate the average chunk length
             self.avg_dl = sum(self.chunk_lengths.values()) / self.N
 
-    # ---------- accessors ---------- #
     def get_postings(self, term: str) -> List[Tuple[str, int]]:
+        """
+        Function that gets postings for a given term.
+        """
         return self.index.get(term.lower(), [])
 
     def df(self, term: str) -> int:
+        """
+        Function that calculates the df (number of occurrences of term)
+        :param term:
+        :return:
+        """
         return len(self.index.get(term.lower(), []))
 
-    # ---------- serialization ---------- #
+    # ---------- serialization part ---------- #
     def save(self, filepath: str):
         """Saves the inverted index to disk using pickle."""
         data = {

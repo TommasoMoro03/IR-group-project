@@ -30,7 +30,7 @@ except FileNotFoundError:
     # otherwise chunks are created
     print(f"No chunks found in {CHUNKS_FILE}.")
     docs = load_documents_from_json(DOCUMENTS_FILE, TEXTS_FOLDER)
-    chunker = Chunker(chunk_size=1024, overlap=50)
+    chunker = Chunker(chunk_size=512, overlap=50)
     chunks = chunker.chunk_documents(docs)
     save_chunks_to_json(chunks, CHUNKS_FILE)
     print(f"{len(docs)} documents splitted in {len(chunks)} chunks.")
