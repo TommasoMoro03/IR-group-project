@@ -2,6 +2,8 @@ import numpy as np
 from typing import List, Tuple
 from retrieving.utils.models import Chunk
 from retrieving.embedding.embedding_models import EmbeddingModel
+import os
+import pickle
 
 
 class VectorIndex:
@@ -84,3 +86,35 @@ class VectorIndex:
 
         # finalize internal matrices
         self.build()
+
+    # ---------- serialization ---------- #
+    def save(self, filepath_prefix: str):
+        """
+        Saves the vector index to disk.
+        Saves embeddings matrix as .npy and document IDs as a pickle file.
+        """
+        np.save(f"{filepath_prefix}_embeddings.npy", self.embeddings_matrix)
+        with open(f"{filepath_prefix}_ids.pkl", 'wb') as f:
+            pickle.dump(self.document_ids, f)
+        print(f"Vector Index saved to {filepath_prefix}_embeddings.npy and {filepath_prefix}_ids.pkl")
+
+    def load(self, filepath_prefix: str):
+        """
+        Loads the vector index from disk.
+        Loads embeddings matrix from .npy and document IDs from a pickle file.
+        """
+        embeddings_path = f"{filepath_prefix}_embeddings.npy"
+        ids_path = f"{filepath_prefix}_ids.pkl"
+
+        if not os.path.exists(embeddings_path) or not os.path.exists(ids_path):
+            raise FileNotFoundError(f"Vector index files not found at {filepath_prefix}_*")
+
+        self.embeddings_matrix = np.load(embeddings_path)
+        with open(ids_path, 'rb') as f:
+            self.document_ids = pickle.load(f)
+
+        norms = np.linalg.norm(self.embeddings_matrix, axis=1, keepdims=True)
+        norms[norms == 0] = 1e-9
+        self.normalized_embeddings_matrix = self.embeddings_matrix / norms
+
+        print(f"Vector Index loaded from {filepath_prefix}_embeddings.npy and {filepath_prefix}_ids.pkl")

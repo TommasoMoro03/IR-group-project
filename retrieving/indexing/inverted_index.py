@@ -1,6 +1,8 @@
 import re
 from collections import defaultdict, Counter
 from typing import Dict, List, Tuple
+import pickle # for serialization
+import os
 
 from retrieving.stemming.custom_stemmer import CustomStemmer
 from retrieving.utils.models import Chunk
@@ -49,3 +51,32 @@ class InvertedIndex:
 
     def df(self, term: str) -> int:
         return len(self.index.get(term.lower(), []))
+
+    # ---------- serialization ---------- #
+    def save(self, filepath: str):
+        """Saves the inverted index to disk using pickle."""
+        data = {
+            'index': dict(self.index),
+            'chunk_lengths': self.chunk_lengths,
+            'N': self.N,
+            'avg_dl': self.avg_dl
+        }
+        with open(filepath, 'wb') as f:
+            pickle.dump(data, f)
+        print(f"Inverted Index saved to {filepath}")
+
+    def load(self, filepath: str):
+        """Loads the inverted index from disk using pickle."""
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"Index file not found at {filepath}")
+
+        with open(filepath, 'rb') as f:
+            data = pickle.load(f)
+
+        self.index = defaultdict(list, data['index'])  # Convert back to defaultdict
+        self.chunk_lengths = data['chunk_lengths']
+        self.N = data['N']
+        self.avg_dl = data['avg_dl']
+        # Re-initialize stemmer, because it's not part of the pickled state
+        self.stemmer = CustomStemmer()
+        print(f"Inverted Index loaded from {filepath}")

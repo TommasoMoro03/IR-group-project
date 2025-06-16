@@ -21,12 +21,16 @@ class Chunker:
             token_chunk = tokens[start:end]
             text_chunk = self.tokenizer.decode(token_chunk)
 
+            chunk_metadata = document.metadata
+            chunk_metadata["document_url"] = document.url
+            chunk_metadata["document_title"] = document.title
+
             chunk = Chunk(
                 id=f"{document.id}_chunk_{chunk_id}",
                 doc_id=document.id,
                 text=text_chunk,
                 position=chunk_id,
-                metadata=document.metadata
+                metadata=chunk_metadata
             )
             chunks.append(chunk)
 

@@ -1,6 +1,9 @@
 import json
 import os
 from typing import List
+
+from nltk.sem.chat80 import items
+
 from .models import Chunk
 
 

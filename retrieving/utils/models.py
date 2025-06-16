@@ -14,7 +14,7 @@ class Document:
 
 @dataclass
 class Chunk:
-    id: str  # e.g., doc_id_chunk_0
+    id: str
     doc_id: str
     text: str
     position: int  # position of chunk in original doc
