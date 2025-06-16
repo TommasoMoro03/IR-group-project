@@ -27,7 +27,7 @@ def extract_links(html_content: str, base_url: str) -> list[str]:
     return cleaned_links
 
 
-def _extract_main_text(html: str) -> (str, str):
+def extract_main_text(html: str) -> (str, str):
     """
     Funzione per estrarre e pulire il testo principale e il titolo da una pagina HTML.
     """
@@ -57,14 +57,20 @@ def _extract_main_text(html: str) -> (str, str):
     text = body_tag.get_text(separator='\n', strip=True) if body_tag else ""
     return text, title
 
-def _is_article_url(url: str) -> bool:
+
+def is_article_url(url: str) -> bool:
     """
     EURISTICA URL: Controlla se l'URL ha la struttura tipica di un articolo.
     """
     path = urlparse(url).path
-    return bool(re.search(r'/\d{4}/\d{2}/\d{2}/', path))
 
-def _extract_metadata_from_url(url: str) -> (str, str):
+    is_standard_article = re.search(r'/\d{4}/\d{2}/\d{2}/', path)
+    is_live_page = '/live/' in path
+    
+    return is_standard_article or is_live_page
+
+
+def extract_metadata_from_url(url: str) -> (str, str):
     """
     Estrae automaticamente categoria e data dall'URL del Post.
     """
@@ -83,6 +89,7 @@ def _extract_metadata_from_url(url: str) -> (str, str):
         pass
     return category, date
 
+
 def _get_next_filename() -> (str, str):
     """
     Calcola il nome del prossimo file da salvare in modo progressivo.
@@ -94,16 +101,17 @@ def _get_next_filename() -> (str, str):
     filename = f"articolo_{next_num:03d}.txt"
     return filename, os.path.join(DOCUMENTS_FOLDER, filename)
 
+
 def save_article_if_new(html_content: str, url: str) -> bool:
     """
     Funzione principale che orchestra l'estrazione, il filtraggio e il salvataggio.
     Restituisce True se l'articolo è stato salvato, False altrimenti.
     """
-    if not _is_article_url(url):
+    if not is_article_url(url):
         print(f"   -> URL non sembra un articolo, skippato: {url.split('/')[-2] if '/' in url else url}")
         return False
 
-    text, title = _extract_main_text(html_content)
+    text, title = extract_main_text(html_content)
 
     word_count = len(text.split())
     if word_count < MIN_ARTICLE_WORDS:
@@ -123,7 +131,7 @@ def save_article_if_new(html_content: str, url: str) -> bool:
         print(f"   -> Articolo già presente nell'indice: {url}")
         return False
 
-    category, date = _extract_metadata_from_url(url)
+    category, date = extract_metadata_from_url(url)
     
     filename, filepath = _get_next_filename()
     with open(filepath, "w", encoding="utf-8") as f:
@@ -160,6 +168,7 @@ def download_html(url):
         # Stampa errore in caso di problemi di rete o URL e restituisce stringa vuota
         print(f"Errore durante il download: {e}")
         return None
+
 
 def main_standalone():
     """
