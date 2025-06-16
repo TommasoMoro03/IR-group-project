@@ -71,7 +71,7 @@ BM25 is implemented from scratch. Scores are computed for each chunk containing 
 Two interchangeable stemmers are available:
 
 - `SimpleStemmer`: a basic rule-based implementation.
-- `CustomStemmer`: based on **NLTK’s PorterStemmer**.
+- `CustomStemmer`: based on **NLTK’s SnowballStemmer**.
 
 You can switch between them by modifying the import in `inverted_index.py` and `keyword_scorer.py`.
 
@@ -112,7 +112,7 @@ retrieving/
 
 ### Notes
 
-- The entire indexing and scoring logic is implemented from scratch (no external IR libraries are used).
+- The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
 - The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
 
 ## Key Features
@@ -123,7 +123,7 @@ retrieving/
 - **Hybrid Retrieval System:** Combines the strengths of modern vectorial search with traditional keyword-based methods for robust retrieval.
 - **Natural Language Querying:** Utilizes RAG to answer free-form text queries effectively.
 
-## Setup and Installation
+## Installation and Usage
 
 To set up the project locally, follow these steps:
 
@@ -141,16 +141,12 @@ To set up the project locally, follow these steps:
     ```bash
     pip install -r requirements.txt
     ```
-
-## Usage
-
-Instructions on how to run the crawler, process the data, and interact with the RAG system will be provided here.
-
-1.  **Configure Crawler:** (e.g., specify seed URLs, domain limits)
-2.  **Run Crawler:** `python crawling/main_crawler.py`
-3.  **Process Scraped Data:** `python scraping/process_data.py`
-4.  **Build Retriever Index:** `python retrieving/build_index.py`
-5.  **Start RAG System:** `python retrieving/run_rag.py`
+    
+4. **Perform crawling and scraping**
+5. **Perform retrieving**
+   ```bash
+    python retrieving/main.py
+   ```
 
 ## Team Members
 
