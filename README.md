@@ -125,7 +125,9 @@ To set up the project locally, follow these steps:
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/TommasoMoro03/IR-group-project.git](https://github.com/TommasoMoro03/IR-group-project.git)
+    git clone https://github.com/TommasoMoro03/IR-group-project.git
+    ```
+    ```bash
     cd IR-group-project
     ```
 2.  **Create a Virtual Environment (Recommended):**
