@@ -3,23 +3,19 @@ import time
 from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 from collections import deque
+import sys
 import os
 
-# Import functions from our scraper module.
-# Make sure this script is run from the project's root directory
-# so it can find the 'scraping' folder.
-try:
-    from scraping.scraper import extract_links, save_article_if_new
-except ImportError:
-    print("Error: Cannot import the scraper module.")
-    print("Please make sure you run this script from the project's root directory.")
-    exit()
+# Add project root to Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from scraping.scraper import extract_links, save_article_if_new
 
 # --- CRAWLER CONFIGURATION ---
 ALLOWED_DOMAIN = "www.ilpost.it"
 SEED_URLS = [f"https://{ALLOWED_DOMAIN}/"]
 MAX_DEPTH = 5
-MAX_PAGES_TO_CRAWL = 100
+MAX_PAGES_TO_CRAWL = 30
 REQUEST_DELAY_SECONDS = 2
 LIVE_URL_PATTERN = "/live/"
 RECRAWL_INTERVAL_SECONDS = 60 * 5
@@ -113,6 +109,7 @@ def main():
     print("\n--- Crawling Complete ---")
     print(f"Total pages processed: {pages_processed_count}, Unique URLs discovered: {len(visited_urls)}")
 
+# This part is useless for the whole process but can be useful if you want to call only the crawler separately.
 if __name__ == "__main__":
     # Make sure the scraping/ directory with scraper.py exists
     # and that this script is run from the project's root directory.

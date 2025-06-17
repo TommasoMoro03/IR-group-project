@@ -1,10 +1,12 @@
-# Retrieval-Augmented Generation (RAG) System with Dynamic Web Corpus
+# Hybrid Retriever implementation with scraped Web Corpus
 
 ## Project Introduction
 
-This repository hosts an Information Retrieval project focused on building a Retrieval-Augmented Generation (RAG) system. Unlike traditional IR systems that operate on static datasets, our system dynamically creates its own document corpus by crawling the web. This custom-built corpus is then leveraged to answer natural language queries by a Language Model (LLM), providing contextually relevant and accurate responses.
+This repository hosts an Information Retrieval project focused on building a hybrid retriever system. 
+Our system creates its own document corpus by crawling the web. This custom-built corpus is then leveraged to
+retrieve the most relevant documents given a certain user query.
 
-The project demonstrates the end-to-end process of web content acquisition, processing, indexing, and retrieval, combining classic IR principles with modern LLM capabilities.
+The project demonstrates the end-to-end process of web content acquisition, processing, indexing, and retrieval, combining classic IR principles with modern embedding capabilities.
 
 ## Project Structure
 
@@ -44,29 +46,31 @@ This directory focuses on processing the raw HTML content fetched by the crawler
 
 ### `retrieving/`
 
-This directory contains all components related to the retrieval phase of the RAG pipeline. It operates on cleaned `.txt` documents and the associated `document_list.json` file, aiming to retrieve the most relevant text chunks for a given query using a hybrid approach.
+This directory contains all components related to the hybrid retriever. It operates on cleaned `.txt` documents and the associated `document_list.json` file, aiming to retrieve the most relevant text chunks for a given query using a hybrid approach.
 
 ---
 
-### Main Components
+#### Main Components
 
-#### 1. Chunking (`utils/chunking.py`)
+##### 1. Chunking (`utils/chunking.py`)
 
 Each document is split into overlapping chunks based on token count (default: 512 tokens with 30-token overlap).
+The choice of splitting the articles in chunk and work on them instead of the whole articles derives from the fact that the semantic vector 
+retriever performs very poorly if the texts have different lengths.
 
-#### 2. Embedding and Vector Index (`embedding/embedding_model.py`, `indexing/vector_index.py`)
+##### 2. Embedding and Vector Index (`embedding/embedding_model.py`, `indexing/vector_index.py`)
 
 Each chunk is converted into a dense vector using the **BAAI/bge-small-en-v1.5** embedding model. All vectors are normalized and stored in a matrix. Retrieval is performed using cosine similarity.
 
-#### 3. Inverted Index (`indexing/inverted_index.py`)
+##### 3. Inverted Index (`indexing/inverted_index.py`)
 
 A custom inverted index is built from scratch. It maps each stemmed token to the list of chunk IDs where it appears, along with the term frequency. Chunk lengths and average document length are also stored for use in BM25 scoring.
 
-#### 4. Keyword Scoring (`scoring/keyword_scorer.py`)
+##### 4. Keyword Scoring (`scoring/keyword_scorer.py`)
 
 BM25 is implemented from scratch. Scores are computed for each chunk containing query terms. These scores are **normalized to the [0, 1] range** using min-max scaling to enable weighted combination with vector scores.
 
-#### 5. Stemming (`stemming/`)
+##### 5. Stemming (`stemming/`)
 
 Two interchangeable stemmers are available:
 
@@ -107,21 +111,13 @@ retrieving/
 │ ├─ data_loader.py
 │ └─ models.py
 │ └─ storage.py
-└─ main.py
+└─ retriever.py
 ```
 
 ### Notes
 
 - The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
 - The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
-
-## Key Features
-
-- **Dynamic Corpus Generation:** Builds its own dataset through controlled web crawling.
-- **Intelligent Content Extraction:** Focuses on relevant main content, minimizing noise.
-- **Duplicate Content Handling:** Avoids redundancy by detecting and managing duplicate and near-duplicate pages.
-- **Hybrid Retrieval System:** Combines the strengths of modern vectorial search with traditional keyword-based methods for robust retrieval.
-- **Natural Language Querying:** Utilizes RAG to answer free-form text queries effectively.
 
 ## Installation and Usage
 
@@ -142,11 +138,11 @@ To set up the project locally, follow these steps:
     pip install -r requirements.txt
     ```
     
-4. **Perform crawling and scraping**
-5. **Perform retrieving**
+4. **Execute the main file**
    ```bash
-    python retrieving/main.py
+    python main.py
    ```
+Note that it is possible to run crawler and retriever separately.
 
 ## Team Members
 
