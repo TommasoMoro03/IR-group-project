@@ -104,20 +104,21 @@ def get_next_filename() -> (str, str):
 
 def save_article_if_new(html_content: str, url: str) -> bool:
     """
-    Funzione principale che orchestra l'estrazione, il filtraggio e il salvataggio.
-    Restituisce True se l'articolo è stato salvato, False altrimenti.
+    Orchestra estrazione, filtraggio e salvataggio.
+    Ora gestisce sia la creazione di nuovi articoli che l'aggiornamento di quelli esistenti (es. pagine live).
     """
     if not is_article_url(url):
         print(f"   -> URL non sembra un articolo, skippato: {url.split('/')[-2] if '/' in url else url}")
         return False
 
     text, title = extract_main_text(html_content)
-
     word_count = len(text.split())
+
     if word_count < MIN_ARTICLE_WORDS:
         print(f"   -> Contenuto troppo corto ({word_count} parole), probabilmente non un articolo. Skippato.")
         return False
 
+    # Carica l'indice JSON
     index_data = []
     if os.path.exists(INDEX_PATH):
         try:
@@ -126,30 +127,46 @@ def save_article_if_new(html_content: str, url: str) -> bool:
         except json.JSONDecodeError:
             print(f"Attenzione: {INDEX_PATH} corrotto. Verrà creato un nuovo file.")
             index_data = []
-            
-    if any(record.get("url") == url for record in index_data):
-        print(f"   -> Articolo già presente nell'indice: {url}")
-        return False
-
-    category, date = extract_metadata_from_url(url)
     
-    filename, filepath = get_next_filename()
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write(f"{title}\n\n{text}")
+    # Cerca se esiste già un record per questo URL
+    existing_record = next((record for record in index_data if record.get("url") == url), None)
+    
+    # --- NUOVA LOGICA DI AGGIORNAMENTO O CREAZIONE ---
+    
+    if existing_record:
+        # **CASO 2: L'ARTICOLO ESISTE (Aggiorna il file .txt)**
+        filename = existing_record['filename']
+        filepath = os.path.join(DOCUMENTS_FOLDER, filename)
+        
+        # Sovrascrive il file esistente con il nuovo contenuto
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(f"{title}\n\n{text}")
+        
+        print(f"   ->Aggiornato contenuto di {filename} ({word_count} parole)")
+        # Non è necessario modificare il JSON, quindi non lo salviamo
+        return True # Ritorna True per indicare che l'operazione ha avuto successo
 
-    record = {
-        "filename": filename,
-        "title": title,
-        "url": url,
-        "metadata": {"category": category, "date": date}
-    }
+    else:
+        # **CASO 1: L'ARTICOLO È NUOVO (Crea nuovo file e nuovo record JSON)**
+        category, date = extract_metadata_from_url(url)
+        filename, filepath = get_next_filename()
+        
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(f"{title}\n\n{text}")
 
-    index_data.append(record)
-    with open(INDEX_PATH, "w", encoding="utf-8") as f:
-        json.dump(index_data, f, ensure_ascii=False, indent=2)
+        new_record = {
+            "filename": filename,
+            "title": title,
+            "url": url,
+            "metadata": {"category": category, "date": date}
+        }
 
-    print(f"   ->Salvato {filename} ({word_count} parole) e aggiornato {INDEX_PATH}")
-    return True
+        index_data.append(new_record)
+        with open(INDEX_PATH, "w", encoding="utf-8") as f:
+            json.dump(index_data, f, ensure_ascii=False, indent=2)
+
+        print(f"   -> Creato {filename} ({word_count} parole) e aggiornato {INDEX_PATH}")
+        return True
 
 
 def download_html(url):
