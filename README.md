@@ -2,7 +2,7 @@
 
 ## Project Introduction
 
-This repository hosts an Information Retrieval project focused on building a hybrid retriever system. 
+This repository hosts an Information Retrieval project focused on building a hybrid retriever system.
 Our system creates its own document corpus by crawling the web. This custom-built corpus is then leveraged to
 retrieve the most relevant documents given a certain user query.
 
@@ -55,7 +55,7 @@ This directory contains all components related to the hybrid retriever. It opera
 ##### 1. Chunking (`utils/chunking.py`)
 
 Each document is split into overlapping chunks based on token count (default: 512 tokens with 30-token overlap).
-The choice of splitting the articles in chunk and work on them instead of the whole articles derives from the fact that the semantic vector 
+The choice of splitting the articles in chunk and work on them instead of the whole articles derives from the fact that the semantic vector
 retriever performs very poorly if the texts have different lengths.
 
 ##### 2. Embedding and Vector Index (`embedding/embedding_model.py`, `indexing/vector_index.py`)
@@ -123,30 +123,22 @@ retrieving/
 
 To set up the project locally, follow these steps:
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/TommasoMoro03/IR-group-project.git
-    ```
-    ```bash
-    cd IR-group-project
-    ```
-2.  **Create a Virtual Environment (Recommended):**
+1.  **Create a Virtual Environment (Recommended):**
     ```bash
     python -m venv venv
     ```
     ```bash
     source venv/bin/activate  # On Windows: `venv\Scripts\activate`
     ```
-3.  **Install Dependencies:**
+2.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
-    
-4. **Execute the main file**
-   ```bash
-    python main.py
-   ```
-Note that it is possible to run crawler and retriever separately.
+3.  **Execute the main file**
+    ```bash
+     python main.py
+    ```
+    Note that it is possible to run crawler and retriever separately.
 
 ## Team Members
 
