@@ -90,7 +90,7 @@ def extract_metadata_from_url(url: str) -> (str, str):
     return category, date
 
 
-def _get_next_filename() -> (str, str):
+def get_next_filename() -> (str, str):
     """
     Calcola il nome del prossimo file da salvare in modo progressivo.
     """
@@ -133,7 +133,7 @@ def save_article_if_new(html_content: str, url: str) -> bool:
 
     category, date = extract_metadata_from_url(url)
     
-    filename, filepath = _get_next_filename()
+    filename, filepath = get_next_filename()
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(f"{title}\n\n{text}")
 
