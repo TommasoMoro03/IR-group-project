@@ -79,7 +79,7 @@ Two interchangeable stemmers are available:
 
 You can switch between them by modifying the import in `inverted_index.py` and `keyword_scorer.py`.
 
-#### 6. Hybrid Retriever (`hybrid_retriever/hybrid_retriever.py`)
+##### 6. Hybrid Retriever (`hybrid_retriever/hybrid_retriever.py`)
 
 The hybrid retriever combines vector and keyword scores using a weighted average:
 
@@ -89,7 +89,7 @@ The `alpha` parameter is configurable. Since both score types are normalized, th
 
 ---
 
-### Directory Structure
+#### Directory Structure
 
 ```bash
 retrieving/
@@ -114,7 +114,7 @@ retrieving/
 └─ retriever.py
 ```
 
-### Notes
+#### Notes
 
 - The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
 - The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
