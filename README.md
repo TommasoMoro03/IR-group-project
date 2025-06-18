@@ -58,6 +58,8 @@ This directory focuses on processing the raw HTML content fetched by the crawler
 
 - **Duplicate and Update Logic**: Implements a two-tiered system to handle redundant content. It first checks an article's URL against the index. If the URL is new, it then calculates a content checksum (hash) to detect and discard pages with identical content coming from different URLs. For known live pages, instead of discarding, it updates the existing document and its metadata to reflect the latest version (the update is done only if the page has been updated).
 
+Note that the clean `.txt` files are saved in the `documents` directory (created automatically)
+
 ### `retrieving/`
 
 This directory contains all components related to the hybrid retriever. It operates on cleaned `.txt` documents and the associated `document_list.json` file (created during the previous steps), aiming to retrieve the most relevant text chunks for a given query using a hybrid approach.
@@ -132,7 +134,7 @@ retrieving/
 
 #### Notes
 
-- The implementation includes also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
+- The implementation includes also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk (`data` directory) then they are simply loaded.
 - The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
 
 ## Installation and Usage
