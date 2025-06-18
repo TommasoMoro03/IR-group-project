@@ -27,7 +27,10 @@ This directory contains the core logic for our web crawler. Its responsibilities
 - **HTTP Requests**: Handles fetching web pages from the internet using the requests library.
 - **Politeness**: Ensures adherence to robots.txt directives and implements a configurable time delay between requests to avoid overloading web servers.
 - **Robustness**: Incorporates heuristics to prevent common "spider traps," including a limit on crawling depth (MAX_DEPTH) and a cap on the total number of pages to process (MAX_PAGES_TO_CRAWL).
-- **Freshness Policy**: Actively identifies pages with high-change-rate patterns (e.g., URLs containing /live/) and re-crawls them periodically to ensure the corpus remains up-to-date.
+- **Freshness Policy**: Actively identifies pages with high-change-rate patterns (e.g., URLs containing /live/) and re-crawls them periodically.
+- **Persistent State**: To allow crawling sessions to be paused and resumed, the crawler implements a persistent state mechanism. Before exiting (either normally or via interruption), it saves the current state of its queues (exploration frontier, high-priority queue) and the set of visited URLs to disk in a \_crawler_state folder. Upon startup, it automatically loads this state, allowing it to continue exactly where it left off without losing progress or the list of live pages to re-crawl.
+
+There is also the option to set a parameter, --new, which allows the user to decide whether to completely refresh the crawling session,deleting the saved .txt files and the JSON file, or to resume the previous session by updating the live pages and continuing the crawl.
 
 ### `scraping/`
 
@@ -41,8 +44,10 @@ This directory focuses on processing the raw HTML content fetched by the crawler
   - Content Length Analysis: Discards pages with a word count below a defined threshold (MIN_ARTICLE_WORDS).
 
 - **Main Content Extraction**: Isolates the primary text of an article by searching for specific HTML containers (e.g., <div class="entry-content">) and implements fallback strategies for robustness.
-- **Link Extraction:** Identifying and extracting all internal and external hyperlinks present on a page to feed back into the `crawling` module's URL frontier.
-- **Duplicate Detection**: Prevents re-processing of the same article by checking the URL of each candidate page against the existing document_list.json index.
+
+- **Link Extraction**: Extracts all internal and external hyperlinks present on a page to feed back into the crawling module's URL frontier.
+
+- **Duplicate and Update Logic**: Prevents re-processing of the same article by checking its URL against the document_list.json index. If an article is new, it's added with a last_crawled_at timestamp. If it's a known live page, its content and timestamp are updated.
 
 ### `retrieving/`
 
@@ -136,7 +141,7 @@ To set up the project locally, follow these steps:
     ```
 3.  **Execute the main file**
     ```bash
-     python main.py
+     python main.py --new
     ```
     Note that it is possible to run crawler and retriever separately.
 
