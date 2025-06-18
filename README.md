@@ -37,17 +37,17 @@ There is also the option to set a parameter, --new, which allows the user to dec
 This directory focuses on processing the raw HTML content fetched by the crawler, turning it into a clean, structured, and non-redundant collection of documents. Its key functionalities are:
 
 - **HTML Parsing**: Uses BeautifulSoup4 to parse HTML and enable DOM navigation.
-- **Article Filtering**: Employs a set of heuristics to distinguish valid articles from other page types (e.g., homepages, category listings). This includes:
+- **Article Filtering (quality insurance)**: Employs a set of heuristics to distinguish valid articles from other page types (e.g., homepages, category listings). This includes:
 
   - URL Structure Analysis: Filters for URLs matching a typical article pattern (e.g., containing a date like /YYYY/MM/DD/).
 
   - Content Length Analysis: Discards pages with a word count below a defined threshold (MIN_ARTICLE_WORDS).
 
-- **Main Content Extraction**: Isolates the primary text of an article by searching for specific HTML containers (e.g., <div class="entry-content">) and implements fallback strategies for robustness.
+- **Main Content Extraction**: Isolates the primary text of an article by searching for specific HTML containers (e.g., <div class="entry-content">), made by looking at the DOM.
 
 - **Link Extraction**: Extracts all internal and external hyperlinks present on a page to feed back into the crawling module's URL frontier.
 
-- **Duplicate and Update Logic**: Prevents re-processing of the same article by checking its URL against the document_list.json index. If an article is new, it's added with a last_crawled_at timestamp. If it's a known live page, its content and timestamp are updated.
+- **Duplicate and Update Logic**: Implements a two-tiered system to handle redundant content. It first checks an article's URL against the index. If the URL is new, it then calculates a content checksum (hash) to detect and discard pages with identical content coming from different URLs. For known live pages, instead of discarding, it updates the existing document and its metadata to reflect the latest version (the update is done only if the page has been updated).
 
 ### `retrieving/`
 
@@ -55,7 +55,7 @@ This directory contains all components related to the hybrid retriever. It opera
 
 ---
 
-#### Main Features
+#### Main Components
 
 ##### 1. Chunking (`utils/chunking.py`)
 
@@ -92,12 +92,6 @@ The hybrid retriever combines vector and keyword scores using a weighted average
 
 The `alpha` parameter is configurable. Since both score types are normalized, the final score is also in the [0, 1] range.
 
-##### 7. Persistency
-
-The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
-In particular, you can notice that when retriever is run, a folder `data` is created in the root. It contains both the chunks in json format and
-the files that contain the inverted index and the vector index.
-
 ---
 
 #### Directory Structure
@@ -127,7 +121,8 @@ retrieving/
 
 #### Notes
 
-- The design is modular: conceptually, you can also independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
+- The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
+- The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
 
 ## Installation and Usage
 

@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import requests
+import hashlib
 from datetime import datetime
 from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
@@ -15,7 +16,7 @@ MIN_ARTICLE_WORDS = 50 # Soglia minima di parole per considerare una pagina un a
 
 def extract_links(html_content: str, base_url: str) -> list[str]:
     """
-    Estrae tutti i link puliti da un contenuto HTML.
+    Estrae tutti i out-link puliti da un contenuto HTML.
     Questa funzione viene chiamata dal crawler per scoprire nuove pagine.
     """
     soup = BeautifulSoup(html_content, 'lxml')
@@ -47,7 +48,7 @@ def extract_main_text(html: str) -> (str, str):
 
 def is_article_url(url: str) -> bool:
     """
-    EURISTICA URL: Controlla se l'URL ha la struttura di un articolo o di una pagina live.
+    EURISTICA URL: Controlla se l'URL ha la struttura di un articolo o di una pagina live (to ensure quality property).
     """
     path = urlparse(url).path
     is_standard_article = re.search(r'/\d{4}/\d{2}/\d{2}/', path)
@@ -87,10 +88,9 @@ def get_next_filename() -> (str, str):
     return filename, os.path.join(DOCUMENTS_FOLDER, filename)
 
 
-def save_article_if_new(html_content: str, url: str) -> bool:
+def save_article_if_new(html_content: str, url: str, response_headers: dict = None) -> bool:
     """
-    Orchestra estrazione, filtraggio e salvataggio.
-    Gestisce sia la creazione di nuovi articoli che l'aggiornamento (timestamp) di quelli esistenti.
+    Orchestra estrazione, filtraggio e salvataggio, ora con controllo checksum per duplicati esatti.
     """
     if not is_article_url(url):
         print(f"   -> URL non sembra un articolo, skippato.")
@@ -102,6 +102,9 @@ def save_article_if_new(html_content: str, url: str) -> bool:
         print(f"   -> Contenuto troppo corto ({word_count} parole), skippato.")
         return False
 
+    # <-- 2. CALCOLA IL CHECKSUM DEL CONTENUTO -->
+    content_hash = hashlib.sha256(text.encode('utf-8')).hexdigest()
+
     index_data = []
     if os.path.exists(INDEX_PATH):
         try:
@@ -110,30 +113,43 @@ def save_article_if_new(html_content: str, url: str) -> bool:
         except json.JSONDecodeError:
             index_data = []
             
-    existing_record = next((record for record in index_data if record.get("url") == url), None)
+    existing_record_by_url = next((record for record in index_data if record.get("url") == url), None)
     
     current_timestamp = datetime.now().isoformat()
+    server_last_modified = response_headers.get('Last-Modified') if response_headers else None
 
-    if existing_record:
-        # L'ARTICOLO ESISTE: Aggiorna il file .txt e il timestamp nel JSON.
-        filename = existing_record['filename']
-        filepath = os.path.join(DOCUMENTS_FOLDER, filename)
-        
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(f"{title}\n\n{text}")
-        
-        # Aggiorna il timestamp nel record esistente
-        existing_record['metadata']['last_crawled_at'] = current_timestamp
-        
-        # Riscrive l'intero file JSON con il record aggiornato
-        with open(INDEX_PATH, "w", encoding="utf-8") as f:
-            json.dump(index_data, f, ensure_ascii=False, indent=2)
+    if existing_record_by_url:
+        # L'ARTICOLO ESISTE GIA' (STESSO URL).
+        is_live_page = '/live/' in url
+        if is_live_page:
+            filename = existing_record_by_url['filename']
+            filepath = os.path.join(DOCUMENTS_FOLDER, filename)
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(f"{title}\n\n{text}")
+            
+            existing_record_by_url['metadata']['last_crawled_at'] = current_timestamp
+            existing_record_by_url['metadata']['content_hash'] = content_hash # Aggiorna anche l'hash
+            if server_last_modified:
+                existing_record_by_url['metadata']['server_last_modified'] = server_last_modified
+            
+            with open(INDEX_PATH, "w", encoding="utf-8") as f:
+                json.dump(index_data, f, ensure_ascii=False, indent=2)
 
-        print(f"   -> Aggiornato contenuto e timestamp di {filename}")
-        return True
-
+            print(f"   -> Aggiornato contenuto e timestamp di {filename} (pagina live)")
+            return True
+        else:
+            print(f"   -> Articolo standard già esistente, skippato: {url}")
+            return False
     else:
-        # L'ARTICOLO È NUOVO: Crea nuovo file e nuovo record.
+        # L'ARTICOLO È NUOVO (URL NUOVO). ORA CONTROLLIAMO SE IL CONTENUTO È UN DUPLICATO.
+        
+        # <-- 3. CONTROLLO DUPLICATI BASATO SUL CHECKSUM -->
+        existing_record_by_hash = next((record for record in index_data if record.get('metadata', {}).get("content_hash") == content_hash), None)
+        if existing_record_by_hash:
+            print(f"   -> Trovato contenuto duplicato. URL: {url} (duplicato di {existing_record_by_hash['url']})")
+            return False
+
+        # Se non è un duplicato, procedi con il salvataggio
         category, date = extract_metadata_from_url(url)
         filename, filepath = get_next_filename()
         
@@ -141,21 +157,18 @@ def save_article_if_new(html_content: str, url: str) -> bool:
             f.write(f"{title}\n\n{text}")
 
         new_record = {
-            "filename": filename,
-            "title": title,
-            "url": url,
+            "filename": filename, "title": title, "url": url,
             "metadata": {
-                "category": category,
-                "date": date,
-                "last_crawled_at": current_timestamp  # Aggiunge il timestamp
+                "category": category, "date": date,
+                "last_crawled_at": current_timestamp,
+                "server_last_modified": server_last_modified,
+                "content_hash": content_hash # <-- 4. SALVA L'HASH NEI METADATI
             }
         }
-
         index_data.append(new_record)
         with open(INDEX_PATH, "w", encoding="utf-8") as f:
             json.dump(index_data, f, ensure_ascii=False, indent=2)
-
-        print(f"   -> Creato {filename} e aggiornato {INDEX_PATH}")
+        print(f"   ->Creato {filename} e aggiornato {INDEX_PATH}")
         return True
 
 
@@ -177,18 +190,18 @@ def main_standalone():
     Funzione principale per gestire l'esecuzione da riga di comando.
     """
     if len(sys.argv) != 2:
-        print("Uso: python -m scraping.scraper <URL>")
-        sys.exit(1)
+        sys.exit("Uso: python -m scraping.scraper <URL>")
     url = sys.argv[1]
     if not (url.startswith("http://") or url.startswith("https://")):
-        print("Errore: l'argomento fornito non è un URL valido.")
-        sys.exit(1)
+        sys.exit("Errore: l'argomento fornito non è un URL valido.")
+    
     print(f"Download e processamento di: {url}")
-    html = download_html(url)
-    if html:
-        save_article_if_new(html, url)
-    else:
-        print("Download fallito. Impossibile processare la pagina.")
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        save_article_if_new(response.text, url, response.headers)
+    except requests.RequestException as e:
+        print(f"Download fallito: {e}")
 
 if __name__ == "__main__":
     main_standalone()
