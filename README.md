@@ -16,7 +16,8 @@ The repository is organized into three main directories, reflecting the logical 
 .
 ├── crawling/
 ├── scraping/
-└── retrieving/
+├── retrieving/
+└── _crawler_state/
 ```
 
 ### `crawling/`
@@ -31,6 +32,18 @@ This directory contains the core logic for our web crawler. Its responsibilities
 - **Persistent State**: To allow crawling sessions to be paused and resumed, the crawler implements a persistent state mechanism. Before exiting (either normally or via interruption), it saves the current state of its queues (exploration frontier, high-priority queue) and the set of visited URLs to disk in a \_crawler_state folder. Upon startup, it automatically loads this state, allowing it to continue exactly where it left off without losing progress or the list of live pages to re-crawl.
 
 There is also the option to set a parameter, --new, which allows the user to decide whether to completely refresh the crawling session,deleting the saved .txt files and the JSON file, or to resume the previous session by updating the live pages and continuing the crawl.
+
+
+### `_crawler_state/`
+
+This directory is used by the crawler to store its state between executions. It ensures that a crawling session can be paused and resumed without losing progress. It includes the following files:
+
+**frontier.json**: stores the current standard queue (URL frontier).
+**priority_queue.json**: stores the high-priority queue (e.g., for live or frequently updated pages).
+**visited.json**: keeps track of URLs that have already been processed.
+
+The crawler will automatically load these files if they exist, or start from scratch if the --new flag is used.
+
 
 ### `scraping/`
 
