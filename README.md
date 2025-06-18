@@ -36,11 +36,11 @@ There is also the option to set a parameter, --new, which allows the user to dec
 
 ### `_crawler_state/`
 
-This directory is used by the crawler to store its state between executions. It ensures that a crawling session can be paused and resumed without losing progress. It includes the following files:
+This directory is used by the crawler to store its state between executions. It ensures that a crawling session can be paused and resumed without losing progress. It includes:
 
-**frontier.json**: stores the current standard queue (URL frontier).
-**priority_queue.json**: stores the high-priority queue (e.g., for live or frequently updated pages).
-**visited.json**: keeps track of URLs that have already been processed.
+- **frontier.json**: stores the current standard queue (URL frontier).
+- **priority_queue.json**: stores the high-priority queue (e.g., for live or frequently updated pages).
+- **visited.json**: keeps track of URLs that have already been processed.
 
 The crawler will automatically load these files if they exist, or start from scratch if the --new flag is used.
 
