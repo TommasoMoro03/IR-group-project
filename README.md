@@ -55,7 +55,7 @@ This directory contains all components related to the hybrid retriever. It opera
 
 ---
 
-#### Main Components
+#### Main Features
 
 ##### 1. Chunking (`utils/chunking.py`)
 
@@ -92,6 +92,12 @@ The hybrid retriever combines vector and keyword scores using a weighted average
 
 The `alpha` parameter is configurable. Since both score types are normalized, the final score is also in the [0, 1] range.
 
+##### 7. Persistency
+
+The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
+In particular, you can notice that when retriever is run, a folder `data` is created in the root. It contains both the chunks in json format and
+the files that contain the inverted index and the vector index.
+
 ---
 
 #### Directory Structure
@@ -121,8 +127,7 @@ retrieving/
 
 #### Notes
 
-- The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
-- The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
+- The design is modular: conceptually, you can also independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
 
 ## Installation and Usage
 

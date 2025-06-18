@@ -19,6 +19,8 @@ def main():
     CHUNKS_FILE = "data/chunks/chunks.json"
     DOCUMENTS_FILE = "document_list.json"
     TEXTS_FOLDER = "documents"
+    # here you can change the query at your choice
+    USER_QUERY = "guerra in Iran"
 
     # ensure index directory exists
     os.makedirs(INDEX_DIR, exist_ok=True)
@@ -82,7 +84,7 @@ def main():
 
 
     # ----------------- TEST QUERY -----------------
-    query = "guerra in Iran"
+    query = USER_QUERY
     results = hybrid.search(query, top_k=5)
 
     print(f"\n--- Hybrid results for query: '{query}' (alpha={hybrid.alpha}) ---")
