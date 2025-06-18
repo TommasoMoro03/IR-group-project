@@ -16,8 +16,7 @@ The repository is organized into three main directories, reflecting the logical 
 .
 ├── crawling/
 ├── scraping/
-├── retrieving/
-└── _crawler_state/
+└── retrieving/
 ```
 
 ### `crawling/`
@@ -33,10 +32,7 @@ This directory contains the core logic for our web crawler. Its responsibilities
 
 There is also the option to set a parameter, --new, which allows the user to decide whether to completely refresh the crawling session,deleting the saved .txt files and the JSON file, or to resume the previous session by updating the live pages and continuing the crawl.
 
-
-### `_crawler_state/`
-
-This directory is used by the crawler to store its state between executions. It ensures that a crawling session can be paused and resumed without losing progress. It includes:
+The state of the crawler is saved between executions in the `_crawler_state` folder. It ensures that a crawling session can be paused and resumed without losing progress. This folder, when created automatically, includes:
 
 - **frontier.json**: stores the current standard queue (URL frontier).
 - **priority_queue.json**: stores the high-priority queue (e.g., for live or frequently updated pages).
@@ -64,7 +60,7 @@ This directory focuses on processing the raw HTML content fetched by the crawler
 
 ### `retrieving/`
 
-This directory contains all components related to the hybrid retriever. It operates on cleaned `.txt` documents and the associated `document_list.json` file, aiming to retrieve the most relevant text chunks for a given query using a hybrid approach.
+This directory contains all components related to the hybrid retriever. It operates on cleaned `.txt` documents and the associated `document_list.json` file (created during the previous steps), aiming to retrieve the most relevant text chunks for a given query using a hybrid approach.
 
 ---
 
@@ -74,7 +70,9 @@ This directory contains all components related to the hybrid retriever. It opera
 
 Each document is split into overlapping chunks based on token count (default: 512 tokens with 30-token overlap).
 The choice of splitting the articles in chunk and work on them instead of the whole articles derives from the fact that the semantic vector
-retriever performs very poorly if the texts have different lengths.
+retriever performs very poorly if the texts have very heterogeneous lengths. This choice, however, may not be the best choice
+because in this way the final output is not made of the articles scraped but from "pieces" of them. Anyway, the chunking part
+can be easily removed if one wants to use the whole articles.
 
 ##### 2. Embedding and Vector Index (`embedding/embedding_model.py`, `indexing/vector_index.py`)
 
@@ -92,10 +90,10 @@ BM25 is implemented from scratch. Scores are computed for each chunk containing 
 
 Two interchangeable stemmers are available:
 
-- `SimpleStemmer`: a basic rule-based implementation.
-- `CustomStemmer`: based on **NLTK’s SnowballStemmer**.
+- `SimpleStemmer`: a basic rule-based scratch implementation.
+- `CustomStemmer`: based on **SnowballStemmer** from NLTK library.
 
-You can switch between them by modifying the import in `inverted_index.py` and `keyword_scorer.py`.
+You can switch between them by modifying the import in `inverted_index.py` and `keyword_scorer.py`. By default, `CustomStemmer` is used.
 
 ##### 6. Hybrid Retriever (`hybrid_retriever/hybrid_retriever.py`)
 
@@ -134,25 +132,31 @@ retrieving/
 
 #### Notes
 
-- The implementation included also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
+- The implementation includes also a part for data consistency: instead of calculating chunks and indexes every time, if they are present in the disk then they are simply loaded.
 - The design is modular: you can independently test vector retrieval, keyword retrieval, or the combined hybrid strategy.
 
 ## Installation and Usage
 
 To set up the project locally, follow these steps:
 
-1.  **Create a Virtual Environment (Recommended):**
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/TommasoMoro03/IR-group-project.git
+    cd IR-group-project
+    ```
+2.  **Create a Virtual Environment (Recommended):**
+    Note that a Python version >= 3.10 is required, otherwise the code may not run.
     ```bash
     python -m venv venv
     ```
     ```bash
     source venv/bin/activate  # On Windows: `venv\Scripts\activate`
     ```
-2.  **Install Dependencies:**
+3.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
-3.  **Execute the main file**
+4.  **Execute the main file**
     ```bash
      python main.py --new
     ```

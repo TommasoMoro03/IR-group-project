@@ -21,6 +21,10 @@ def main():
     TEXTS_FOLDER = "documents"
     # here you can change the query at your choice
     USER_QUERY = "guerra in Iran"
+    # please customize also the alpha parameters, as explained in the README represent the weights given to the vector score
+    # it MUST be between 0 and 1
+    # 0=only keywords, 1=only vector
+    ALPHA_WEIGHT = 0.8
 
     # ensure index directory exists
     os.makedirs(INDEX_DIR, exist_ok=True)
@@ -78,9 +82,7 @@ def main():
     kw_scorer = KeywordScorer(inverted_index)
 
     # --- Initialize Hybrid Retriever ---
-    # alpha parameter controls vectorial importance (0.0 to 1.0)
-    # 0=only keywords, 1=only vector
-    hybrid = HybridRetriever(vector_scorer, kw_scorer, alpha=0.9)
+    hybrid = HybridRetriever(vector_scorer, kw_scorer, alpha=ALPHA_WEIGHT)
 
 
     # ----------------- TEST QUERY -----------------
